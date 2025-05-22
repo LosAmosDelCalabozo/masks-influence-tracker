@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Influencia - Masks RPG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .section {
+            margin-bottom: 50px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.6em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #00ffff;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            letter-spacing: 1px;
+        }
+
+        .section-title.give {
+            color: #ff6b6b;
+            text-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+        }
+
+        .section-title.receive {
+            color: #4ecdc4;
+            text-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+            min-width: 700px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 15px 10px;
+            text-align: center;
+            font-size: 0.9em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        th:first-child {
+            border-top-left-radius: 10px;
+            width: 60px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 10px;
+            width: 120px;
+        }
+
+        td {
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 0.85em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        tr:hover {
+            background: rgba(0, 255, 255, 0.1);
+            transform: scale(1.01);
+        }
+
+        tr:hover td {
+            color: #00ffff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Deleted row styling */
+        tr.deleted {
+            background: rgba(255, 0, 0, 0.1) !important;
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        tr.deleted:hover {
+            background: rgba(255, 0, 0, 0.2) !important;
+        }
+
+        tr.deleted td {
+            color: #ff6b6b !important;
+        }
+
+        td[contenteditable="true"] {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            cursor: text;
+        }
+
+        td[contenteditable="true"]:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+
+        td[contenteditable="true"]:focus {
+            outline: none;
+            background: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+            border: 1px solid #00ffff;
+        }
+
+        .checkbox-cell {
+            width: 60px;
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #00ffff;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .checkbox-cell input[type="checkbox"]:hover {
+            transform: scale(1.2);
+        }
+
+        .checkbox-cell input[type="checkbox"]:checked {
+            filter: drop-shadow(0 0 5px #00ffff);
+        }
+
+        .actions-cell {
+            width: 120px;
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.7em;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .delete-btn {
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+            color: white;
+            box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
+        }
+
+        .delete-btn:hover {
+            background: linear-gradient(45deg, #ff3742, #ff2636);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+        }
+
+        .undo-btn {
+            background: linear-gradient(45deg, #2ed573, #1dd361);
+            color: white;
+            box-shadow: 0 2px 8px rgba(46, 213, 115, 0.3);
+        }
+
+        .undo-btn:hover {
+            background: linear-gradient(45deg, #1dd361, #17c653);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(46, 213, 115, 0.5);
+        }
+
+        .add-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto 0;
+            padding: 12px 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: #fff;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .add-button:hover {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .add-button:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2em;
+                margin-bottom: 30px;
+            }
+            
+            .section {
+                padding: 20px 15px;
+                margin-bottom: 30px;
+            }
+            
+            .section-title {
+                font-size: 1.3em;
+                margin-bottom: 20px;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+                font-size: 0.8em;
+            }
+            
+            .add-button {
+                width: 100%;
+                max-width: 250px;
+            }
+
+            .actions-cell {
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            .action-btn {
+                font-size: 0.6em;
+                padding: 4px 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.6em;
+            }
+            
+            .section-title {
+                font-size: 1.1em;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+                font-size: 0.75em;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 10px !important;
+            }
+            
+            body::before {
+                display: none;
+            }
+            
+            .container {
+                max-width: none !important;
+                display: block;
+            }
+            
+            h1 {
+                font-size: 18px !important;
+                margin-bottom: 15px !important;
+                color: #000 !important;
+                text-shadow: none !important;
+                background: none !important;
+                -webkit-text-fill-color: initial !important;
+                text-align: center;
+                page-break-after: avoid;
+            }
+            
+            .print-tables-container {
+                display: flex;
+                flex-direction: row;
+                gap: 20px;
+                height: calc(100vh - 80px);
+            }
+            
+            .section {
+                background: white !important;
+                border: 1px solid #000 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+                flex: 1;
+                padding: 10px !important;
+                margin-bottom: 0 !important;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .section-title {
+                color: #000 !important;
+                text-shadow: none !important;
+                font-size: 14px !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .table-container {
+                background: white !important;
+                box-shadow: none !important;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            table {
+                font-size: 8px !important;
+                min-width: auto !important;
+                flex: 1;
+            }
+            
+            tbody {
+                height: 100%;
+            }
+            
+            th {
+                background: #f0f0f0 !important;
+                color: #000 !important;
+                text-shadow: none !important;
+                padding: 4px 2px !important;
+                font-size: 8px !important;
+            }
+            
+            td {
+                border: 1px solid #000 !important;
+                background: white !important;
+                padding: 3px 2px !important;
+                font-size: 7px !important;
+                line-height: 1.2 !important;
+            }
+            
+            .checkbox-cell {
+                width: 20px !important;
+            }
+            
+            .checkbox-cell input[type="checkbox"] {
+                width: 10px !important;
+                height: 10px !important;
+            }
+            
+            .add-button {
+                display: none !important;
+            }
+            
+            .actions-cell, th:last-child {
+                display: none !important;
+            }
+            
+            /* Hide deleted rows in print */
+            tr.deleted {
+                display: none !important;
+            }
+            
+            /* Add empty rows to fill page in print */
+            .print-filler-row {
+                display: table-row !important;
+            }
+            
+            .print-filler-row td {
+                height: 20px !important;
+                border: 1px solid #000 !important;
+            }
+        }
+
+        .print-filler-row {
+            display: none;
+        }
+
+        /* Loading Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .section:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .section:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Control de Influencia - Masks RPG ⚡</h1>
+
+        <div class="print-tables-container">
+            <div class="section">
+                <div class="section-title give">🔥 Tengo Influencia Sobre</div>
+                <div class="table-container">
+                    <table id="giveTable">
+                        <thead>
+                            <tr>
+                                <th>✔️</th>
+                                <th>Nombre</th>
+                                <th>Ranger</th>
+                                <th>Razón</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button class="add-button" onclick="addRow('giveTable')">+ Agregar Personaje</button>
+            </div>
+
+            <div class="section">
+                <div class="section-title receive">⚡ Tiene Influencia Sobre Mí</div>
+                <div class="table-container">
+                    <table id="receiveTable">
+                        <thead>
+                            <tr>
+                                <th>✔️</th>
+                                <th>Nombre</th>
+                                <th>Ranger</th>
+                                <th>Cómo la Consiguió</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button class="add-button" onclick="addRow('receiveTable')">+ Agregar Personaje</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultData = {
+            giveTable: [
+                ["Rajish", "Caracol Zafiro", "", ""],
+                ["Kenshiro", "León Dorado", "", ""],
+                ["Ethan", "Guepardo Jade", "", ""],
+                ["Pa Pua", "Erizo Ónix", "", ""],
+                ["Yoko", "Dragón Rubí", "líder", ""],
+                ["Gandix Prime", "—", "mentor", ""]
+            ],
+            receiveTable: [
+                ["Rajish", "Caracol Zafiro", "", ""],
+                ["Kenshiro", "León Dorado", "", ""],
+                ["Ethan", "Guepardo Jade", "", ""],
+                ["Pa Pua", "Erizo Ónix", "", ""],
+                ["Yoko", "Dragón Rubí", "líder", ""],
+                ["Gandix Prime", "—", "mentor", ""]
+            ]
+        };
+
+        function createRow(name = "", ranger = "", reason = "", date = "", checked = false, deleted = false, tableId = "") {
+            const tr = document.createElement("tr");
+            if (deleted) {
+                tr.classList.add("deleted");
+            }
+            
+            tr.innerHTML = `
+                <td class="checkbox-cell"><input type="checkbox" ${checked ? "checked" : ""}></td>
+                <td contenteditable="true">${name}</td>
+                <td contenteditable="true">${ranger}</td>
+                <td contenteditable="true">${reason}</td>
+                <td contenteditable="true">${date}</td>
+                <td class="actions-cell">
+                    ${deleted ? 
+                        `<button class="action-btn undo-btn" onclick="undoDelete(this)">Deshacer</button>` :
+                        `<button class="action-btn delete-btn" onclick="deleteRow(this)">Eliminar</button>`
+                    }
+                </td>
+            `;
+            
+            // Add event listeners to editable cells and checkbox
+            tr.querySelectorAll("td[contenteditable='true']").forEach(td => {
+                td.addEventListener("input", saveData);
+            });
+            tr.querySelector("input").addEventListener("change", saveData);
+            
+            return tr;
+        }
+
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            row.classList.add('deleted');
+            
+            // Replace delete button with undo button
+            button.outerHTML = '<button class="action-btn undo-btn" onclick="undoDelete(this)">Deshacer</button>';
+            
+            // Add subtle animation
+            row.style.transform = 'translateX(-5px)';
+            setTimeout(() => {
+                row.style.transition = 'all 0.3s ease';
+                row.style.transform = 'translateX(0)';
+            }, 100);
+            
+            saveData();
+        }
+
+        function undoDelete(button) {
+            const row = button.closest('tr');
+            row.classList.remove('deleted');
+            
+            // Replace undo button with delete button
+            button.outerHTML = '<button class="action-btn delete-btn" onclick="deleteRow(this)">Eliminar</button>';
+            
+            // Add subtle animation
+            row.style.transform = 'translateX(5px)';
+            setTimeout(() => {
+                row.style.transition = 'all 0.3s ease';
+                row.style.transform = 'translateX(0)';
+            }, 100);
+            
+            saveData();
+        }
+
+        function populateTable(id, data) {
+            const tbody = document.getElementById(id).querySelector("tbody");
+            tbody.innerHTML = "";
+            data.forEach(row => {
+                tbody.appendChild(createRow(row[0], row[1], row[2], row[3], row[4], false, id));
+            });
+        }
+
+        function saveData() {
+            const data = { giveTable: [], receiveTable: [] };
+            ["giveTable", "receiveTable"].forEach(id => {
+                const rows = document.getElementById(id).querySelectorAll("tbody tr:not(.print-filler-row)");
+                rows.forEach(tr => {
+                    const cells = tr.querySelectorAll("td");
+                    const isDeleted = tr.classList.contains('deleted');
+                    data[id].push([
+                        cells[1].textContent, // name
+                        cells[2].textContent, // ranger
+                        cells[3].textContent, // reason
+                        cells[4].textContent, // date
+                        cells[0].querySelector("input").checked, // checkbox
+                        isDeleted // deleted flag
+                    ]);
+                });
+            });
+            localStorage.setItem("influenceTrackerData", JSON.stringify(data));
+        }
+
+        function loadData() {
+            const stored = localStorage.getItem("influenceTrackerData");
+            let data;
+            if (stored) {
+                data = JSON.parse(stored);
+                // Filter out deleted rows on page load
+                data.giveTable = data.giveTable.filter(row => !row[5]);
+                data.receiveTable = data.receiveTable.filter(row => !row[5]);
+            } else {
+                data = defaultData;
+            }
+            populateTable("giveTable", data.giveTable);
+            populateTable("receiveTable", data.receiveTable);
+            
+            // Add empty rows for print version only (not saved to data)
+            addEmptyRowsForPrint();
+        }
+
+        function addEmptyRowsForPrint() {
+            // Add empty rows to fill the page in print mode (these won't be saved)
+            const numEmptyRows = 25;
+            
+            ["giveTable", "receiveTable"].forEach(tableId => {
+                const tbody = document.getElementById(tableId).querySelector("tbody");
+                
+                for (let i = 0; i < numEmptyRows; i++) {
+                    const tr = document.createElement("tr");
+                    tr.className = "print-filler-row";
+                    tr.innerHTML = `
+                        <td class="checkbox-cell"><input type="checkbox"></td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    `;
+                    // Don't add event listeners to filler rows so they won't trigger saveData
+                    tbody.appendChild(tr);
+                }
+            });
+        }
+
+        function addRow(tableId) {
+            const tbody = document.getElementById(tableId).querySelector("tbody");
+            const tr = createRow("", "", "", "", false, false, tableId);
+            tbody.appendChild(tr);
+            
+            // Add subtle animation for new rows
+            tr.style.opacity = '0';
+            tr.style.transform = 'translateX(-10px)';
+            
+            setTimeout(() => {
+                tr.style.transition = 'all 0.3s ease';
+                tr.style.opacity = '1';
+                tr.style.transform = 'translateX(0)';
+            }, 10);
+            
+            saveData();
+        }
+
+        document.addEventListener("DOMContentLoaded", loadData);
+    </script>
+</body>
+</html>
