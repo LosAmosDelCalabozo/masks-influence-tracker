@@ -492,11 +492,114 @@
         .section:nth-child(3) {
             animation-delay: 0.2s;
         }
+
+        .section:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        /* Lookup Section Styles */
+        .lookup-section {
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .lookup-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #ffff00;
+            text-shadow: 0 0 20px rgba(255, 255, 0, 0.5);
+            letter-spacing: 1px;
+        }
+
+        .lookup-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .lookup-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            min-width: 100px;
+        }
+
+        .blank-btn {
+            background: linear-gradient(45deg, #6c757d, #495057);
+            color: white;
+            box-shadow: 0 3px 10px rgba(108, 117, 125, 0.3);
+        }
+
+        .blank-btn:hover {
+            background: linear-gradient(45deg, #495057, #343a40);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.5);
+        }
+
+        .henshin-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .henshin-btn:hover {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .random-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .random-btn:hover {
+            background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+        }
+
+        @media (max-width: 480px) {
+            .lookup-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .lookup-btn {
+                width: 120px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>⚡ Control de Influencia - Masks RPG ⚡</h1>
+        
+        <div class="lookup-section">
+            <div class="lookup-title">🔍 Cargar Datos</div>
+            <div class="lookup-buttons">
+                <button class="lookup-btn blank-btn" onclick="loadPreset('blank')">Blank</button>
+                <button class="lookup-btn henshin-btn" onclick="loadPreset('henshin')">Henshin</button>
+                <button class="lookup-btn random-btn" onclick="loadPreset('random')">Random</button>
+            </div>
+        </div>
 
         <div class="print-tables-container">
             <div class="section">
@@ -542,7 +645,8 @@
     </div>
 
     <script>
-        const defaultData = {
+        // In-memory storage instead of localStorage
+        let gameData = {
             giveTable: [
                 ["Rajish", "Caracol Zafiro", "", ""],
                 ["Kenshiro", "León Dorado", "", ""],
@@ -560,6 +664,153 @@
                 ["Gandix Prime", "—", "mentor", ""]
             ]
         };
+
+        // Default data sets
+        const defaultDataSets = {
+            henshin: {
+                giveTable: [
+                    ["Rajish", "Caracol Zafiro", "", ""],
+                    ["Kenshiro", "León Dorado", "", ""],
+                    ["Ethan", "Guepardo Jade", "", ""],
+                    ["Pa Pua", "Erizo Ónix", "", ""],
+                    ["Yoko", "Dragón Rubí", "líder", ""],
+                    ["Gandix Prime", "—", "mentor", ""]
+                ],
+                receiveTable: [
+                    ["Rajish", "Caracol Zafiro", "", ""],
+                    ["Kenshiro", "León Dorado", "", ""],
+                    ["Ethan", "Guepardo Jade", "", ""],
+                    ["Pa Pua", "Erizo Ónix", "", ""],
+                    ["Yoko", "Dragón Rubí", "líder", ""],
+                    ["Gandix Prime", "—", "mentor", ""]
+                ]
+            },
+            blank: {
+                giveTable: [],
+                receiveTable: []
+            }
+        };
+
+        // Random data generators
+        const randomNames = [
+            "Alex Storm", "Maya Chen", "Jordan Rivers", "Sam Nova", "Riley Phoenix",
+            "Casey Volt", "Quinn Shadow", "Avery Blaze", "Harper Frost", "Skyler Wave",
+            "Dr. Marcus Vex", "Luna Darkmore", "Captain Steel", "Raven Nightshade", "Echo Prime",
+            "Zara Lightning", "Kai Stormwind", "Nova Sterling", "Ash Blackthorne", "Vera Cosmos"
+        ];
+
+        const randomRangers = [
+            "Águila Dorada", "Lobo Plateado", "Tigre Escarlata", "Halcón Azul", "Serpiente Verde",
+            "Oso Bronce", "Libélula Violeta", "Escorpión Negro", "Mariposa Rosa", "Ciervo Blanco",
+            "Dragón Cristal", "Fénix Carmesí", "Pantera Sombra", "Delfín Turquesa", "Búho Lunar",
+            "Mantis Jade", "Cóndor Solar", "Zorro Ámbar", "Ballena Marina", "Murciélago Obsidiana"
+        ];
+
+        const randomReasons = [
+            "salvé su vida en batalla", "descubrí su identidad secreta", "le enseñé una técnica especial",
+            "protegí a su familia", "le revelé información importante", "luché junto a él/ella",
+            "le ayudé en un momento difícil", "compartimos un secreto", "entrené juntos",
+            "le salvé de una trampa", "confía en mi juicio", "le di consejos cruciales",
+            "le ayudé a controlar sus poderes", "le protegí de sus enemigos", "le mostré el camino correcto"
+        ];
+
+        const randomInfluenceGains = [
+            "me salvó la vida", "descubrió mi punto débil", "me derrotó en combate",
+            "me enseñó una lección importante", "me ayudó cuando más lo necesitaba", "confío en su experiencia",
+            "me inspiró a ser mejor", "me protegió de un gran peligro", "me mostró mi error",
+            "ganó mi respeto en batalla", "me ayudó con mis poderes", "me dio esperanza",
+            "me defendió ante otros", "sacrificó algo por mí", "me enseñó sobre el heroísmo"
+        ];
+
+        function generateRandomData() {
+            const shuffleArray = (array) => {
+                const shuffled = [...array];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+            };
+
+            const getRandomDate = () => {
+                const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", 
+                               "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+                const month = months[Math.floor(Math.random() * months.length)];
+                const day = Math.floor(Math.random() * 28) + 1;
+                return `${day} ${month}`;
+            };
+
+            const numEntries = Math.floor(Math.random() * 6) + 4; // 4-9 entries
+            const shuffledNames = shuffleArray(randomNames);
+            const shuffledRangers = shuffleArray(randomRangers);
+
+            const giveTable = [];
+            const receiveTable = [];
+
+            for (let i = 0; i < numEntries && i < shuffledNames.length; i++) {
+                const name = shuffledNames[i];
+                const ranger = shuffledRangers[i];
+                const date = getRandomDate();
+
+                // Some entries appear in both tables, some only in one
+                const inBoth = Math.random() < 0.6; // 60% chance to be in both
+                const inGive = inBoth || Math.random() < 0.7; // 70% chance if not in both
+                const inReceive = inBoth || !inGive || Math.random() < 0.7;
+
+                if (inGive) {
+                    const reason = randomReasons[Math.floor(Math.random() * randomReasons.length)];
+                    giveTable.push([name, ranger, reason, date]);
+                }
+
+                if (inReceive) {
+                    const howGained = randomInfluenceGains[Math.floor(Math.random() * randomInfluenceGains.length)];
+                    receiveTable.push([name, ranger, howGained, date]);
+                }
+            }
+
+            return { giveTable, receiveTable };
+        }
+
+        function loadPreset(preset) {
+            let data;
+            
+            if (preset === 'random') {
+                data = generateRandomData();
+            } else {
+                data = defaultDataSets[preset];
+            }
+
+            // Update gameData
+            gameData = {
+                giveTable: data.giveTable.map(row => [...row, false, false]), // add checkbox and deleted flags
+                receiveTable: data.receiveTable.map(row => [...row, false, false])
+            };
+
+            // Clear existing tables
+            document.getElementById('giveTable').querySelector('tbody').innerHTML = '';
+            document.getElementById('receiveTable').querySelector('tbody').innerHTML = '';
+
+            // Populate tables
+            populateTable("giveTable", data.giveTable);
+            populateTable("receiveTable", data.receiveTable);
+
+            // Add empty rows for print
+            addEmptyRowsForPrint();
+
+            // Save the new data
+            saveData();
+
+            // Add visual feedback
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = '✓ Cargado';
+            button.style.background = 'linear-gradient(45deg, #2ed573, #1dd361)';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.className = button.className; // Reset styles
+            }, 1500);
+        }
 
         function createRow(name = "", ranger = "", reason = "", date = "", checked = false, deleted = false, tableId = "") {
             const tr = document.createElement("tr");
@@ -649,22 +900,45 @@
                     ]);
                 });
             });
-            localStorage.setItem("influenceTrackerData", JSON.stringify(data));
+            // Update in-memory storage
+            gameData = data;
+            
+            // Try to save to localStorage if available (for standalone HTML file)
+            try {
+                localStorage.setItem("influenceTrackerData", JSON.stringify(data));
+            } catch (e) {
+                // localStorage not available, continue with in-memory storage
+            }
         }
 
         function loadData() {
-            const stored = localStorage.getItem("influenceTrackerData");
             let data;
-            if (stored) {
-                data = JSON.parse(stored);
-                // Filter out deleted rows on page load
-                data.giveTable = data.giveTable.filter(row => !row[5]);
-                data.receiveTable = data.receiveTable.filter(row => !row[5]);
-            } else {
-                data = defaultData;
+            
+            // Try to load from localStorage first (for standalone HTML file)
+            try {
+                const stored = localStorage.getItem("influenceTrackerData");
+                if (stored) {
+                    data = JSON.parse(stored);
+                    // Update in-memory storage
+                    gameData = data;
+                }
+            } catch (e) {
+                // localStorage not available or error parsing
             }
-            populateTable("giveTable", data.giveTable);
-            populateTable("receiveTable", data.receiveTable);
+            
+            // Use in-memory data or default data
+            if (!data) {
+                data = gameData;
+            }
+            
+            // Filter out deleted rows on page load
+            const filteredData = {
+                giveTable: data.giveTable.filter(row => !row[5]),
+                receiveTable: data.receiveTable.filter(row => !row[5])
+            };
+            
+            populateTable("giveTable", filteredData.giveTable);
+            populateTable("receiveTable", filteredData.receiveTable);
             
             // Add empty rows for print version only (not saved to data)
             addEmptyRowsForPrint();
