@@ -6,6 +6,7 @@
     <title>Control de Influencia - Masks RPG</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        /* General styling */
         * {
             box-sizing: border-box;
         }
@@ -22,6 +23,7 @@
             font-weight: bold; /* All fonts bold */
         }
 
+        /* Background effects */
         body::before {
             content: '';
             position: fixed;
@@ -37,6 +39,7 @@
             z-index: -1;
         }
 
+        /* Main container for content */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -44,6 +47,7 @@
             z-index: 1;
         }
 
+        /* Main title styling */
         h1 {
             text-align: center;
             margin-bottom: 40px;
@@ -59,11 +63,13 @@
             letter-spacing: 2px;
         }
 
+        /* Keyframe animation for title gradient */
         @keyframes gradientShift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
 
+        /* Section styling (tables) */
         .section {
             margin-bottom: 50px;
             background: rgba(255, 255, 255, 0.02);
@@ -80,6 +86,7 @@
             box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
         }
 
+        /* Section title styling */
         .section-title {
             text-align: center;
             font-size: 1.6em;
@@ -100,6 +107,7 @@
             text-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
         }
 
+        /* Table container styling */
         .table-container {
             overflow-x: auto;
             border-radius: 10px;
@@ -114,6 +122,7 @@
             min-width: 700px;
         }
 
+        /* Table header styling */
         th {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
@@ -130,8 +139,7 @@
         /* Specific styles for editable headers */
         th[contenteditable="true"] {
             cursor: text;
-            /* Override background for editable cells to be a subtle transparent to show original gradient */
-            background: rgba(255, 255, 255, 0.05); /* Slightly different background for editable headers */
+            background: rgba(255, 255, 255, 0.05); /* Subtle transparent background for editable headers */
             border-radius: 5px;
         }
 
@@ -151,7 +159,6 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 		
-
         th:first-child {
             border-top-left-radius: 10px;
             width: 60px;
@@ -162,6 +169,7 @@
             width: 120px;
         }
 
+        /* Table data cell styling */
         td {
             padding: 12px 10px;
             text-align: center;
@@ -185,6 +193,7 @@
             text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
         }
 
+        /* Styling for deleted rows */
         tr.deleted {
             background: rgba(255, 0, 0, 0.1) !important;
             opacity: 0.6;
@@ -199,6 +208,7 @@
             color: #ff6b6b !important;
         }
 
+        /* Styling for editable data cells */
         td[contenteditable="true"] {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 5px;
@@ -218,6 +228,7 @@
             border: 1px solid #00ffff;
         }
 
+        /* Checkbox styling */
         .checkbox-cell {
             width: 60px;
         }
@@ -238,6 +249,7 @@
             filter: drop-shadow(0 0 5px #00ffff);
         }
 
+        /* Action buttons in table cells */
         .actions-cell {
             width: 120px;
             display: flex;
@@ -283,6 +295,7 @@
             box-shadow: 0 4px 12px rgba(46, 213, 115, 0.5);
         }
 
+        /* Add row button */
         .add-button {
             display: block;
             width: 200px;
@@ -308,6 +321,7 @@
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
         }
 
+        /* Lookup/Preset section */
         .lookup-section {
             margin-bottom: 40px;
             background: rgba(255, 255, 255, 0.03);
@@ -349,6 +363,7 @@
             min-width: 100px;
         }
 
+        /* Specific lookup button styles */
         .blank-btn {
             background: linear-gradient(45deg, #6c757d, #495057);
             color: white;
@@ -397,6 +412,32 @@
             box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
         }
 
+        /* NEW: Export and Import button styles */
+        .export-btn {
+            background: linear-gradient(45deg, #00b894, #008f7a);
+            color: white;
+            box-shadow: 0 3px 10px rgba(0, 184, 148, 0.3);
+        }
+
+        .export-btn:hover {
+            background: linear-gradient(45deg, #008f7a, #00b894);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.5);
+        }
+
+        .import-btn {
+            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+            color: white;
+            box-shadow: 0 3px 10px rgba(162, 155, 254, 0.3);
+        }
+
+        .import-btn:hover {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(162, 155, 254, 0.5);
+        }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             body { padding: 15px; }
             h1 { font-size: 2em; margin-bottom: 30px; }
@@ -416,7 +457,7 @@
             .lookup-btn { width: 120px; }
         }
 		
-		 /* Print-specific styles */
+		/* Print-specific styles */
         @media print {
             @page {
                 size: A4 landscape;
@@ -589,10 +630,13 @@
         <div class="lookup-section no-print">
             <div class="lookup-title">🔍 Cargar Datos</div>
             <div class="lookup-buttons">
-                <button class="lookup-btn blank-btn" onclick="loadPreset('blank')">Blank</button>
-                <button class="lookup-btn henshin-btn" onclick="loadPreset('henshin')">Henshin</button>
-                <button class="lookup-btn random-btn" onclick="loadPreset('random')">Random</button>
-                <button class="lookup-btn clear-btn" onclick="clearAllData()">Borrar Todo</button>
+                <button class="lookup-btn blank-btn" onclick="loadPreset(event, 'blank')">Blank</button>
+                <button class="lookup-btn henshin-btn" onclick="loadPreset(event, 'henshin')">Henshin</button>
+                <button class="lookup-btn random-btn" onclick="loadPreset(event, 'random')">Random</button>
+                <button class="lookup-btn clear-btn" onclick="clearAllData(event)">Borrar Todo</button>
+                <button class="lookup-btn export-btn" onclick="exportDataToJson(event)">Descargar Datos</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importDataFromJson(event)">
+                <button class="lookup-btn import-btn" onclick="document.getElementById('importFile').click()">Cargar Datos</button>
             </div>
         </div>
         <button class="add-button print-btn no-print" onclick="prepareForPrinting()">🖨️ Imprimir</button>
@@ -646,8 +690,10 @@
         }
 
         // Clear all data
-        function clearAllData() {
-            if (confirm("¿Estás seguro de que quieres borrar todos los datos? Esta acción no se puede deshacer.")) {
+        function clearAllData(event) { // Added event parameter
+            // Using a custom confirmation message in the UI instead of window.confirm
+            const confirmClear = confirm("¿Estás seguro de que quieres borrar todos los datos? Esta acción no se puede deshacer.");
+            if (confirmClear) {
                 localStorage.removeItem('masksInfluenceTracker');
                 localStorage.removeItem('masksInfluenceTracker_header_giveRanger'); // Clear saved header for give table
                 localStorage.removeItem('masksInfluenceTracker_header_receiveRanger'); // Clear saved header for receive table
@@ -799,7 +845,7 @@
             "protegí a su familia", "le revelé información importante", "luché junto a él/ella",
             "le ayudé en un momento difícil", "compartimos un secreto", "entrené juntos",
             "le salvé de una trampa", "confía en mi juicio", "le di consejos cruciales",
-            "le ayudé a controlar sus poderes", "le protegí de sus enemigos", "le mostré el camino correcto"
+            "le ayudó a controlar sus poderes", "le protegí de sus enemigos", "le mostré el camino correcto"
         ];
 
         const randomInfluenceGains = [
@@ -875,7 +921,7 @@
             return { giveTable, receiveTable };
         }
 
-        function loadPreset(preset) {
+        function loadPreset(event, preset) { // Added event parameter
             let data;
             
             if (preset === 'random') {
@@ -1058,12 +1104,126 @@
             }
         }
 
+        /**
+         * Exports the current game data and header information to a JSON file,
+         * triggering a download for the user.
+         * @param {Event} event The click event from the button.
+         */
+        function exportDataToJson(event) {
+            const dataToSave = {
+                gameData: gameData,
+                headers: {
+                    giveRanger: document.getElementById('giveRangerHeader').textContent,
+                    receiveRanger: document.getElementById('receiveRangerHeader').textContent
+                }
+            };
+            const jsonData = JSON.stringify(dataToSave, null, 2); // Pretty print JSON for readability
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'masks_influence_tracker_data.json'; // Default filename
+            document.body.appendChild(a);
+            a.click(); // Programmatically click the link to trigger download
+            document.body.removeChild(a); // Clean up the temporary link
+            URL.revokeObjectURL(url); // Release the object URL
+
+            // Visual feedback for the button
+            const button = event.target;
+            const originalText = button.textContent;
+            const originalClass = button.className;
+            
+            button.textContent = '✓ Descargado';
+            button.style.background = 'linear-gradient(45deg, #2ed573, #1dd361)'; // Green for success
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.className = originalClass;
+                button.style.background = ''; // Revert background
+            }, 1500); // Revert after 1.5 seconds
+        }
+
+        /**
+         * Imports game data and header information from a selected JSON file.
+         * @param {Event} event The change event from the file input.
+         */
+        function importDataFromJson(event) {
+            const file = event.target.files[0];
+            const button = document.querySelector('.import-btn'); // Get the import button for feedback
+            const originalText = button.textContent;
+            const originalClass = button.className;
+
+            if (!file) {
+                // No file selected, reset button feedback if it was previously showing an error
+                button.textContent = originalText;
+                button.className = originalClass;
+                button.style.background = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    // Validate the structure of the imported data
+                    if (importedData.gameData && importedData.headers && 
+                        importedData.gameData.giveTable && importedData.gameData.receiveTable &&
+                        importedData.headers.giveRanger !== undefined && importedData.headers.receiveRanger !== undefined) {
+                        
+                        gameData = importedData.gameData; // Update global gameData
+                        
+                        // Restore headers to localStorage
+                        localStorage.setItem('masksInfluenceTracker_header_giveRanger', importedData.headers.giveRanger);
+                        localStorage.setItem('masksInfluenceTracker_header_receiveRanger', importedData.headers.receiveRanger);
+                        
+                        saveGameData(); // Save the newly imported data to localStorage
+                        populateTablesFromData(); // Refresh tables with new data
+                        loadHeaders(); // Refresh headers with new data
+
+                        // Visual feedback for success
+                        button.textContent = '✓ Cargado';
+                        button.style.background = 'linear-gradient(45deg, #2ed573, #1dd361)'; // Green for success
+                        
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.className = originalClass;
+                            button.style.background = '';
+                        }, 1500);
+
+                    } else {
+                        // Invalid file format
+                        console.error("Error: El archivo JSON no tiene el formato esperado.");
+                        button.textContent = '❌ Error';
+                        button.style.background = 'linear-gradient(45deg, #ff4757, #ff3742)'; // Red for error
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.className = originalClass;
+                            button.style.background = '';
+                        }, 2500);
+                    }
+                } catch (error) {
+                    // JSON parsing error
+                    console.error("Error al leer el archivo JSON: ", error);
+                    button.textContent = '❌ Error JSON';
+                    button.style.background = 'linear-gradient(45deg, #ff4757, #ff3742)'; // Red for error
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.className = originalClass;
+                        button.style.background = '';
+                    }, 2500);
+                }
+            };
+            reader.readAsText(file); // Read the file content as text
+            // Clear the input so the same file can be re-selected if needed
+            event.target.value = '';
+        }
+
         // Initialize on load
         window.addEventListener('DOMContentLoaded', () => {
             // Try to load saved data first
             if (!loadGameData()) {
                 // If no saved data, load the Henshin preset
-                loadPreset('henshin');
+                loadPreset(null, 'henshin'); // Pass null for event as it's not a user click
             } else {
                 // If loaded saved data, populate tables
                 populateTablesFromData();
