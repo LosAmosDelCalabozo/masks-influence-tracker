@@ -19,6 +19,7 @@
             min-height: 100vh;
             position: relative;
             overflow-x: auto;
+            font-weight: bold; /* All fonts bold */
         }
 
         body::before {
@@ -125,6 +126,31 @@
             border: none;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
+        
+        /* Specific styles for editable headers */
+        th[contenteditable="true"] {
+            cursor: text;
+            /* Override background for editable cells to be a subtle transparent to show original gradient */
+            background: rgba(255, 255, 255, 0.05); /* Slightly different background for editable headers */
+            border-radius: 5px;
+        }
+
+        th[contenteditable="true"]:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+
+        th[contenteditable="true"]:focus {
+            outline: none;
+            background: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+            border: 1px solid #00ffff;
+        }
+		
+		thead th[contenteditable="true"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+		
 
         th:first-child {
             border-top-left-radius: 10px;
@@ -159,7 +185,6 @@
             text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
         }
 
-        /* Deleted row styling */
         tr.deleted {
             background: rgba(255, 0, 0, 0.1) !important;
             opacity: 0.6;
@@ -283,221 +308,6 @@
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
         }
 
-        .add-button:active {
-            transform: translateY(0);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 2em;
-                margin-bottom: 30px;
-            }
-            
-            .section {
-                padding: 20px 15px;
-                margin-bottom: 30px;
-            }
-            
-            .section-title {
-                font-size: 1.3em;
-                margin-bottom: 20px;
-            }
-            
-            th, td {
-                padding: 10px 8px;
-                font-size: 0.8em;
-            }
-            
-            .add-button {
-                width: 100%;
-                max-width: 250px;
-            }
-
-            .actions-cell {
-                flex-direction: column;
-                gap: 3px;
-            }
-
-            .action-btn {
-                font-size: 0.6em;
-                padding: 4px 8px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.6em;
-            }
-            
-            .section-title {
-                font-size: 1.1em;
-            }
-            
-            th, td {
-                padding: 8px 6px;
-                font-size: 0.75em;
-            }
-        }
-
-        /* Print Styles */
-        @media print {
-            body {
-                background: white !important;
-                color: black !important;
-                padding: 10px !important;
-            }
-            
-            body::before {
-                display: none;
-            }
-            
-            .container {
-                max-width: none !important;
-                display: block;
-            }
-            
-            h1 {
-                font-size: 18px !important;
-                margin-bottom: 15px !important;
-                color: #000 !important;
-                text-shadow: none !important;
-                background: none !important;
-                -webkit-text-fill-color: initial !important;
-                text-align: center;
-                page-break-after: avoid;
-            }
-            
-            .print-tables-container {
-                display: flex;
-                flex-direction: row;
-                gap: 20px;
-                height: calc(100vh - 80px);
-            }
-            
-            .section {
-                background: white !important;
-                border: 1px solid #000 !important;
-                box-shadow: none !important;
-                page-break-inside: avoid;
-                flex: 1;
-                padding: 10px !important;
-                margin-bottom: 0 !important;
-                display: flex;
-                flex-direction: column;
-            }
-            
-            .section-title {
-                color: #000 !important;
-                text-shadow: none !important;
-                font-size: 14px !important;
-                margin-bottom: 10px !important;
-            }
-            
-            .table-container {
-                background: white !important;
-                box-shadow: none !important;
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-            }
-            
-            table {
-                font-size: 8px !important;
-                min-width: auto !important;
-                flex: 1;
-            }
-            
-            tbody {
-                height: 100%;
-            }
-            
-            th {
-                background: #f0f0f0 !important;
-                color: #000 !important;
-                text-shadow: none !important;
-                padding: 4px 2px !important;
-                font-size: 8px !important;
-            }
-            
-            td {
-                border: 1px solid #000 !important;
-                background: white !important;
-                padding: 3px 2px !important;
-                font-size: 7px !important;
-                line-height: 1.2 !important;
-            }
-            
-            .checkbox-cell {
-                width: 20px !important;
-            }
-            
-            .checkbox-cell input[type="checkbox"] {
-                width: 10px !important;
-                height: 10px !important;
-            }
-            
-            .add-button {
-                display: none !important;
-            }
-            
-            .actions-cell, th:last-child {
-                display: none !important;
-            }
-            
-            /* Hide deleted rows in print */
-            tr.deleted {
-                display: none !important;
-            }
-            
-            /* Add empty rows to fill page in print */
-            .print-filler-row {
-                display: table-row !important;
-            }
-            
-            .print-filler-row td {
-                height: 20px !important;
-                border: 1px solid #000 !important;
-            }
-        }
-
-        .print-filler-row {
-            display: none;
-        }
-
-        /* Loading Animation */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .section {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        .section:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-
-        .section:nth-child(3) {
-            animation-delay: 0.2s;
-        }
-
-        .section:nth-child(4) {
-            animation-delay: 0.3s;
-        }
-
-        /* Lookup Section Styles */
         .lookup-section {
             margin-bottom: 40px;
             background: rgba(255, 255, 255, 0.03);
@@ -507,7 +317,6 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             text-align: center;
-            animation: fadeIn 0.6s ease-out;
         }
 
         .lookup-title {
@@ -576,14 +385,157 @@
             box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
         }
 
+        .clear-btn {
+            background: linear-gradient(45deg, #ff4757, #ff6b6b);
+            color: white;
+            box-shadow: 0 3px 10px rgba(255, 71, 87, 0.3);
+        }
+
+        .clear-btn:hover {
+            background: linear-gradient(45deg, #ff6b6b, #ff4757);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            h1 { font-size: 2em; margin-bottom: 30px; }
+            .section { padding: 20px 15px; margin-bottom: 30px; }
+            .section-title { font-size: 1.3em; margin-bottom: 20px; }
+            th, td { padding: 10px 8px; font-size: 0.8em; }
+            .add-button { width: 100%; max-width: 250px; }
+            .actions-cell { flex-direction: column; gap: 3px; }
+            .action-btn { font-size: 0.6em; padding: 4px 8px; }
+        }
+
         @media (max-width: 480px) {
-            .lookup-buttons {
-                flex-direction: column;
-                align-items: center;
+            h1 { font-size: 1.6em; }
+            .section-title { font-size: 1.1em; }
+            th, td { padding: 8px 6px; font-size: 0.75em; }
+            .lookup-buttons { flex-direction: column; align-items: center; }
+            .lookup-btn { width: 120px; }
+        }
+		
+		 /* Print-specific styles */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 1cm;
+            }
+
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                height: 100%;
+                font-weight: normal; /* Override bold for print if not desired */
+            }
+
+            .container {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                height: 100%;
+            }
+
+            h1, .lookup-section, .add-button {
+                display: none !important;
+            }
+
+            .section {
+                background: transparent !important;
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                page-break-inside: avoid;
+                height: 100%;
+            }
+
+            .section-title {
+                color: black !important;
+                text-shadow: none !important;
+                font-size: 16pt !important;
+                margin-bottom: 10px !important;
+            }
+
+            .table-container {
+                box-shadow: none !important;
+                background: transparent !important;
+                overflow: visible !important;
+                height: calc(100% - 30px);
+            }
+
+            table {
+                min-width: auto !important;
+                width: 100% !important;
+                font-size: 12pt !important;
+                height: 100%;
+            }
+
+            th, td {
+                padding: 8px 6px !important;
+                font-size: 11pt !important;
+                color: black !important;
+                border: 1px solid #ddd !important;
+            }
+
+            th {
+                background: #f2f2f2 !important;
+                color: black !important;
             }
             
-            .lookup-btn {
-                width: 120px;
+            th[contenteditable="true"] {
+                background: #f2f2f2 !important; /* Keep consistent with other th */
+                box-shadow: none !important;
+                border: 1px solid #ddd !important; /* Add border for print */
+            }
+
+            tr:nth-child(even) {
+                background: #f9f9f9 !important;
+            }
+
+            tr.deleted, tr.deleted td {
+                text-decoration: line-through;
+                color: #999 !important;
+                background: #f9f9f9 !important;
+            }
+
+            .checkbox-cell input[type="checkbox"] {
+                width: 16px !important;
+                height: 16px !important;
+                accent-color: black !important;
+            }
+
+            /* Side-by-side tables for printing */
+            .print-layout {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                width: 100%;
+                height: 100%;
+            }
+
+            .print-table {
+                flex: 1 1 45%;
+                min-width: 0;
+                height: 100%;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            /* Blank rows for printing */
+            .blank-row {
+                height: 30px; /* Adjust as needed for row height */
+            }
+
+            .blank-row td {
+                border: 1px dashed #999 !important; /* Better border for blank rows */
+                /* Ensure cells are empty but visible for blank rows */
+                background-color: white !important;
             }
         }
     </style>
@@ -592,17 +544,8 @@
     <div class="container">
         <h1>⚡ Control de Influencia - Masks RPG ⚡</h1>
         
-        <div class="lookup-section">
-            <div class="lookup-title">🔍 Cargar Datos</div>
-            <div class="lookup-buttons">
-                <button class="lookup-btn blank-btn" onclick="loadPreset('blank')">Blank</button>
-                <button class="lookup-btn henshin-btn" onclick="loadPreset('henshin')">Henshin</button>
-                <button class="lookup-btn random-btn" onclick="loadPreset('random')">Random</button>
-            </div>
-        </div>
-
-        <div class="print-tables-container">
-            <div class="section">
+        <div class="print-layout">
+            <div class="section print-table">
                 <div class="section-title give">🔥 Tengo Influencia Sobre</div>
                 <div class="table-container">
                     <table id="giveTable">
@@ -610,19 +553,19 @@
                             <tr>
                                 <th>✔️</th>
                                 <th>Nombre</th>
-                                <th>Ranger</th>
+                                <th id="giveRangerHeader" contenteditable="true" oninput="updateHeader(this, 'giveRanger')">Ranger</th>
                                 <th>Razón</th>
                                 <th>Fecha</th>
-                                <th>Acciones</th>
+                                <th class="no-print">Acciones</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
                 </div>
-                <button class="add-button" onclick="addRow('giveTable')">+ Agregar Personaje</button>
+                <button class="add-button no-print" onclick="addRow('giveTable')">+ Agregar Personaje</button>
             </div>
 
-            <div class="section">
+            <div class="section print-table">
                 <div class="section-title receive">⚡ Tiene Influencia Sobre Mí</div>
                 <div class="table-container">
                     <table id="receiveTable">
@@ -630,59 +573,204 @@
                             <tr>
                                 <th>✔️</th>
                                 <th>Nombre</th>
-                                <th>Ranger</th>
+                                <th id="receiveRangerHeader" contenteditable="true" oninput="updateHeader(this, 'receiveRanger')">Ranger</th>
                                 <th>Cómo la Consiguió</th>
                                 <th>Fecha</th>
-                                <th>Acciones</th>
+                                <th class="no-print">Acciones</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
                 </div>
-                <button class="add-button" onclick="addRow('receiveTable')">+ Agregar Personaje</button>
+                <button class="add-button no-print" onclick="addRow('receiveTable')">+ Agregar Personaje</button>
             </div>
         </div>
+
+        <div class="lookup-section no-print">
+            <div class="lookup-title">🔍 Cargar Datos</div>
+            <div class="lookup-buttons">
+                <button class="lookup-btn blank-btn" onclick="loadPreset('blank')">Blank</button>
+                <button class="lookup-btn henshin-btn" onclick="loadPreset('henshin')">Henshin</button>
+                <button class="lookup-btn random-btn" onclick="loadPreset('random')">Random</button>
+                <button class="lookup-btn clear-btn" onclick="clearAllData()">Borrar Todo</button>
+            </div>
+        </div>
+        <button class="add-button print-btn no-print" onclick="prepareForPrinting()">🖨️ Imprimir</button>
     </div>
 
     <script>
-        // In-memory storage instead of localStorage
+        // In-memory storage for game data
         let gameData = {
-            giveTable: [
-                ["Rajish", "Caracol Zafiro", "", ""],
-                ["Kenshiro", "León Dorado", "", ""],
-                ["Ethan", "Guepardo Jade", "", ""],
-                ["Pa Pua", "Erizo Ónix", "", ""],
-                ["Yoko", "Dragón Rubí", "líder", ""],
-                ["Gandix Prime", "—", "mentor", ""]
-            ],
-            receiveTable: [
-                ["Rajish", "Caracol Zafiro", "", ""],
-                ["Kenshiro", "León Dorado", "", ""],
-                ["Ethan", "Guepardo Jade", "", ""],
-                ["Pa Pua", "Erizo Ónix", "", ""],
-                ["Yoko", "Dragón Rubí", "líder", ""],
-                ["Gandix Prime", "—", "mentor", ""]
-            ]
+            giveTable: [],
+            receiveTable: []
         };
+        // Store a copy of original gameData for printing to revert later
+        let originalGameData = {};
+
+        // Save data to localStorage
+        function saveGameData() {
+            localStorage.setItem('masksInfluenceTracker', JSON.stringify(gameData));
+        }
+
+        // Load data from localStorage
+        function loadGameData() {
+            const savedData = localStorage.getItem('masksInfluenceTracker');
+            if (savedData) {
+                gameData = JSON.parse(savedData);
+                return true;
+            }
+            return false;
+        }
+
+        // Save header text to localStorage
+        function updateHeader(element, headerKey) {
+            localStorage.setItem(`masksInfluenceTracker_header_${headerKey}`, element.textContent);
+        }
+
+        // Load header text from localStorage
+        function loadHeaders() {
+            const giveRangerHeader = localStorage.getItem('masksInfluenceTracker_header_giveRanger');
+            const receiveRangerHeader = localStorage.getItem('masksInfluenceTracker_header_receiveRanger');
+
+            if (giveRangerHeader) {
+                document.getElementById('giveRangerHeader').textContent = giveRangerHeader;
+            } else {
+                document.getElementById('giveRangerHeader').textContent = 'Ranger';
+            }
+
+            if (receiveRangerHeader) {
+                document.getElementById('receiveRangerHeader').textContent = receiveRangerHeader;
+            } else {
+                document.getElementById('receiveRangerHeader').textContent = 'Ranger';
+            }
+        }
+
+        // Clear all data
+        function clearAllData() {
+            if (confirm("¿Estás seguro de que quieres borrar todos los datos? Esta acción no se puede deshacer.")) {
+                localStorage.removeItem('masksInfluenceTracker');
+                localStorage.removeItem('masksInfluenceTracker_header_giveRanger'); // Clear saved header for give table
+                localStorage.removeItem('masksInfluenceTracker_header_receiveRanger'); // Clear saved header for receive table
+                gameData = { giveTable: [], receiveTable: [] };
+                populateTablesFromData();
+                loadHeaders(); // Reset headers to default as well
+                
+                // Visual feedback
+                const button = event.target;
+                const originalText = button.textContent;
+                const originalClass = button.className;
+                
+                button.textContent = '✓ Borrado';
+                button.className = 'lookup-btn clear-btn';
+                button.style.background = 'linear-gradient(45deg, #2ed573, #1dd361)';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.className = originalClass;
+                    button.style.background = '';
+                }, 1500);
+            }
+        }
+
+        // Populate tables from gameData, filtering out deleted rows
+        function populateTablesFromData() {
+            // Clear existing tables
+            document.getElementById('giveTable').querySelector('tbody').innerHTML = '';
+            document.getElementById('receiveTable').querySelector('tbody').innerHTML = '';
+
+            // Populate giveTable
+            gameData.giveTable.forEach(rowData => {
+                // Only render if not deleted OR if it's a temporary blank row (for printing)
+                if (!rowData.deleted || rowData.tempBlank) {
+                    const row = createRow(
+                        rowData.name,
+                        rowData.ranger,
+                        rowData.reason,
+                        rowData.date,
+                        rowData.checked,
+                        rowData.deleted, 
+                        'giveTable',
+                        rowData.tempBlank
+                    );
+                    document.getElementById('giveTable').querySelector('tbody').appendChild(row);
+                }
+            });
+
+            // Populate receiveTable
+            gameData.receiveTable.forEach(rowData => {
+                // Only render if not deleted OR if it's a temporary blank row (for printing)
+                if (!rowData.deleted || rowData.tempBlank) {
+                    const row = createRow(
+                        rowData.name,
+                        rowData.ranger,
+                        rowData.reason,
+                        rowData.date,
+                        rowData.checked,
+                        rowData.deleted, 
+                        'receiveTable',
+                        rowData.tempBlank
+                    );
+                    document.getElementById('receiveTable').querySelector('tbody').appendChild(row);
+                }
+            });
+        }
+        
+        // This function now adds "data" for blank rows into gameData temporarily
+        function addBlankRowsForPrinting() {
+            const targetRows = 15; // Approximately 15 rows fit on A4 landscape
+            
+            // Add blank data rows to give table
+            const currentGiveDataRows = gameData.giveTable.filter(row => !row.deleted).length;
+            for (let i = currentGiveDataRows; i < targetRows; i++) {
+                gameData.giveTable.push({
+                    checked: false, name: "", ranger: "", reason: "", date: "", deleted: false, tempBlank: true
+                });
+            }
+            
+            // Add blank data rows to receive table
+            const currentReceiveDataRows = gameData.receiveTable.filter(row => !row.deleted).length;
+            for (let i = currentReceiveDataRows; i < targetRows; i++) {
+                gameData.receiveTable.push({
+                    checked: false, name: "", ranger: "", reason: "", date: "", deleted: false, tempBlank: true
+                });
+            }
+        }
+
+        function prepareForPrinting() {
+            // Store the current state of gameData
+            originalGameData = JSON.parse(JSON.stringify(gameData)); 
+
+            addBlankRowsForPrinting(); // Add blank rows to gameData
+            populateTablesFromData(); // Re-render tables with blank rows
+
+            window.print();
+            
+            // Revert gameData and re-populate after printing is done (or canceled)
+            // Use setTimeout to allow the print dialog to be handled first
+            setTimeout(() => {
+                gameData = JSON.parse(JSON.stringify(originalGameData)); // Restore original data
+                populateTablesFromData(); // Re-render tables without blank rows
+            }, 500); // Give a little time for print dialog to appear/close
+        }
 
         // Default data sets
         const defaultDataSets = {
             henshin: {
                 giveTable: [
-                    ["Rajish", "Caracol Zafiro", "", ""],
-                    ["Kenshiro", "León Dorado", "", ""],
-                    ["Ethan", "Guepardo Jade", "", ""],
-                    ["Pa Pua", "Erizo Ónix", "", ""],
-                    ["Yoko", "Dragón Rubí", "líder", ""],
-                    ["Gandix Prime", "—", "mentor", ""]
+                    { checked: false, name: "Rajish", ranger: "Caracol Zafiro", reason: "", date: "", deleted: false, tempBlank: false },
+                    { checked: false, name: "Kenshiro", ranger: "León Dorado", reason: "", date: "", deleted: false, tempBlank: false },
+                    { checked: false, name: "Ethan", ranger: "Guepardo Jade", reason: "", date: "", deleted: false, tempBlank: false },
+                    { checked: false, name: "Pa Pua", ranger: "Erizo Ónix", reason: "", date: "", deleted: false, tempBlank: false },
+                    { checked: false, name: "Yoko", ranger: "Dragón Rubí", reason: "líder", date: "", deleted: false, tempBlank: false },
+                    { checked: false, name: "Gandix Prime", ranger: "—", reason: "mentor", date: "", deleted: false, tempBlank: false }
                 ],
                 receiveTable: [
-                    ["Rajish", "Caracol Zafiro", "", ""],
-                    ["Kenshiro", "León Dorado", "", ""],
-                    ["Ethan", "Guepardo Jade", "", ""],
-                    ["Pa Pua", "Erizo Ónix", "", ""],
-                    ["Yoko", "Dragón Rubí", "líder", ""],
-                    ["Gandix Prime", "—", "mentor", ""]
+                    { checked: false, name: "Rajish", ranger: "Caracol Zafiro", reason: "", date: "", deleted: false, tempBlank: false },
+                    { checked: false, name: "Kenshiro", ranger: "León Dorado", reason: "", date: "", deleted: false, tempBlank: false },
+                    { checked: false, name: "Ethan", ranger: "Guepardo Jade", reason: "", date: "", deleted: false, tempBlank: false },
+                    { checked: false, name: "Pa Pua", ranger: "Erizo Ónix", reason: "", date: "", deleted: false, tempBlank: false },
+                    { checked: false, name: "Yoko", ranger: "Dragón Rubí", reason: "líder", date: "", deleted: false, tempBlank: false },
+                    { checked: false, name: "Gandix Prime", ranger: "—", reason: "mentor", date: "", deleted: false, tempBlank: false }
                 ]
             },
             blank: {
@@ -759,12 +847,28 @@
 
                 if (inGive) {
                     const reason = randomReasons[Math.floor(Math.random() * randomReasons.length)];
-                    giveTable.push([name, ranger, reason, date]);
+                    giveTable.push({
+                        checked: false,
+                        name: name,
+                        ranger: ranger,
+                        reason: reason,
+                        date: date,
+                        deleted: false,
+                        tempBlank: false
+                    });
                 }
 
                 if (inReceive) {
                     const howGained = randomInfluenceGains[Math.floor(Math.random() * randomInfluenceGains.length)];
-                    receiveTable.push([name, ranger, howGained, date]);
+                    receiveTable.push({
+                        checked: false,
+                        name: name,
+                        ranger: ranger,
+                        reason: howGained,
+                        date: date,
+                        deleted: false,
+                        tempBlank: false
+                    });
                 }
             }
 
@@ -782,211 +886,198 @@
 
             // Update gameData
             gameData = {
-                giveTable: data.giveTable.map(row => [...row, false, false]), // add checkbox and deleted flags
-                receiveTable: data.receiveTable.map(row => [...row, false, false])
+                giveTable: [...data.giveTable],
+                receiveTable: [...data.receiveTable]
             };
+            
+            // Save and populate tables
+            saveGameData();
+            populateTablesFromData();
 
-            // Clear existing tables
-            document.getElementById('giveTable').querySelector('tbody').innerHTML = '';
-            document.getElementById('receiveTable').querySelector('tbody').innerHTML = '';
-
-            // Populate tables
-            populateTable("giveTable", data.giveTable);
-            populateTable("receiveTable", data.receiveTable);
-
-            // Add empty rows for print
-            addEmptyRowsForPrint();
-
-            // Save the new data
-            saveData();
-
-            // Add visual feedback
+            // Visual feedback
             const button = event.target;
             const originalText = button.textContent;
+            const originalClass = button.className;
+            
             button.textContent = '✓ Cargado';
             button.style.background = 'linear-gradient(45deg, #2ed573, #1dd361)';
             
             setTimeout(() => {
                 button.textContent = originalText;
-                button.className = button.className; // Reset styles
+                button.className = originalClass;
+                button.style.background = '';
             }, 1500);
         }
 
-        function createRow(name = "", ranger = "", reason = "", date = "", checked = false, deleted = false, tableId = "") {
+        function createRow(name = "", ranger = "", reason = "", date = "", checked = false, deleted = false, tableId = "", tempBlank = false) {
             const tr = document.createElement("tr");
             if (deleted) {
-                tr.classList.add("deleted");
+                tr.classList.add("deleted"); // Apply deleted style if marked
+            }
+            if (tempBlank) {
+                tr.classList.add("blank-row"); // Apply blank row style for printing
             }
             
             tr.innerHTML = `
-                <td class="checkbox-cell"><input type="checkbox" ${checked ? "checked" : ""}></td>
-                <td contenteditable="true">${name}</td>
-                <td contenteditable="true">${ranger}</td>
-                <td contenteditable="true">${reason}</td>
-                <td contenteditable="true">${date}</td>
-                <td class="actions-cell">
-                    ${deleted ? 
-                        `<button class="action-btn undo-btn" onclick="undoDelete(this)">Deshacer</button>` :
-                        `<button class="action-btn delete-btn" onclick="deleteRow(this)">Eliminar</button>`
+                <td class="checkbox-cell">
+                    ${tempBlank ? `<input type="checkbox" disabled>` : `<input type="checkbox" ${checked ? "checked" : ""} onchange="updateRowData(this)">`}
+                </td>
+                <td contenteditable="${!tempBlank}" oninput="updateRowData(this)">${name || '&nbsp;'}</td>
+                <td contenteditable="${!tempBlank}" oninput="updateRowData(this)">${ranger || '&nbsp;'}</td>
+                <td contenteditable="${!tempBlank}" oninput="updateRowData(this)">${reason || '&nbsp;'}</td>
+                <td contenteditable="${!tempBlank}" oninput="updateRowData(this)">${date || '&nbsp;'}</td>
+                <td class="actions-cell no-print">
+                    ${tempBlank ? '&nbsp;' : // No actions for blank rows
+                        (deleted ? 
+                            '<button class="action-btn undo-btn" onclick="undoDelete(this)">Restaurar</button>' :
+                            '<button class="action-btn delete-btn" onclick="deleteRow(this)">Eliminar</button>'
+                        )
                     }
                 </td>
             `;
             
-            // Add event listeners to editable cells and checkbox
-            tr.querySelectorAll("td[contenteditable='true']").forEach(td => {
-                td.addEventListener("input", saveData);
-            });
-            tr.querySelector("input").addEventListener("change", saveData);
-            
             return tr;
+        }
+
+        function addRow(tableId) {
+            const newRowData = {
+                checked: false,
+                name: "",
+                ranger: "",
+                reason: "",
+                date: "",
+                deleted: false,
+                tempBlank: false // New rows are not temporary blank
+            };
+            gameData[tableId].push(newRowData);
+            saveGameData();
+            populateTablesFromData(); // Re-populate to show the new row
+
+            // Find the newly added row in the DOM and focus on its first editable cell
+            const tableBody = document.getElementById(tableId).querySelector('tbody');
+            const lastRow = tableBody.lastElementChild;
+            if (lastRow) {
+                const firstEditableCell = lastRow.querySelector('td[contenteditable="true"]');
+                if (firstEditableCell) {
+                    firstEditableCell.focus();
+                }
+            }
         }
 
         function deleteRow(button) {
             const row = button.closest('tr');
-            row.classList.add('deleted');
+            const table = button.closest('table');
+            const tableId = table.id;
+            const rowIndexInDOM = Array.from(table.querySelectorAll('tbody tr')).indexOf(row);
             
-            // Replace delete button with undo button
-            button.outerHTML = '<button class="action-btn undo-btn" onclick="undoDelete(this)">Deshacer</button>';
-            
-            // Add subtle animation
-            row.style.transform = 'translateX(-5px)';
-            setTimeout(() => {
-                row.style.transition = 'all 0.3s ease';
-                row.style.transform = 'translateX(0)';
-            }, 100);
-            
-            saveData();
+            // Find the corresponding data item in gameData (considering visible rows only for indexing)
+            let dataIndex = -1;
+            let visibleCount = 0;
+            for (let i = 0; i < gameData[tableId].length; i++) {
+                // If the row is not deleted and not a temporary blank row, it's visible in normal view
+                if (!gameData[tableId][i].deleted && !gameData[tableId][i].tempBlank) {
+                    if (visibleCount === rowIndexInDOM) {
+                        dataIndex = i;
+                        break;
+                    }
+                    visibleCount++;
+                }
+            }
+
+            if (dataIndex !== -1) {
+                gameData[tableId][dataIndex].deleted = true; // Mark as deleted in gameData
+                saveGameData(); // Save the updated data
+
+                // Immediately update UI to show it's marked for deletion, but don't remove
+                row.classList.add('deleted');
+                button.textContent = 'Restaurar';
+                button.className = 'action-btn undo-btn';
+                // Update the onclick to point to undoDelete
+                button.onclick = () => undoDelete(button); 
+            }
         }
 
         function undoDelete(button) {
             const row = button.closest('tr');
-            row.classList.remove('deleted');
+            const table = button.closest('table');
+            const tableId = table.id;
+            // The name is used to find the corresponding data item in gameData, as rowIndexInDOM might not be reliable after filtering
+            const nameToFind = row.querySelector('td:nth-child(2)').textContent; 
             
-            // Replace undo button with delete button
-            button.outerHTML = '<button class="action-btn delete-btn" onclick="deleteRow(this)">Eliminar</button>';
+            // Find the row in gameData that matches the name and is currently marked as deleted
+            // Ensure we are looking for the exact row in gameData, not just any row with that name
+            const dataRowIndex = gameData[tableId].findIndex(item => item.name === nameToFind && item.deleted);
             
-            // Add subtle animation
-            row.style.transform = 'translateX(5px)';
-            setTimeout(() => {
-                row.style.transition = 'all 0.3s ease';
-                row.style.transform = 'translateX(0)';
-            }, 100);
-            
-            saveData();
-        }
-
-        function populateTable(id, data) {
-            const tbody = document.getElementById(id).querySelector("tbody");
-            tbody.innerHTML = "";
-            data.forEach(row => {
-                tbody.appendChild(createRow(row[0], row[1], row[2], row[3], row[4], false, id));
-            });
-        }
-
-        function saveData() {
-            const data = { giveTable: [], receiveTable: [] };
-            ["giveTable", "receiveTable"].forEach(id => {
-                const rows = document.getElementById(id).querySelectorAll("tbody tr:not(.print-filler-row)");
-                rows.forEach(tr => {
-                    const cells = tr.querySelectorAll("td");
-                    const isDeleted = tr.classList.contains('deleted');
-                    data[id].push([
-                        cells[1].textContent, // name
-                        cells[2].textContent, // ranger
-                        cells[3].textContent, // reason
-                        cells[4].textContent, // date
-                        cells[0].querySelector("input").checked, // checkbox
-                        isDeleted // deleted flag
-                    ]);
-                });
-            });
-            // Update in-memory storage
-            gameData = data;
-            
-            // Try to save to localStorage if available (for standalone HTML file)
-            try {
-                localStorage.setItem("influenceTrackerData", JSON.stringify(data));
-            } catch (e) {
-                // localStorage not available, continue with in-memory storage
-            }
-        }
-
-        function loadData() {
-            let data;
-            
-            // Try to load from localStorage first (for standalone HTML file)
-            try {
-                const stored = localStorage.getItem("influenceTrackerData");
-                if (stored) {
-                    data = JSON.parse(stored);
-                    // Update in-memory storage
-                    gameData = data;
-                }
-            } catch (e) {
-                // localStorage not available or error parsing
-            }
-            
-            // Use in-memory data or default data
-            if (!data) {
-                data = gameData;
-            }
-            
-            // Filter out deleted rows on page load
-            const filteredData = {
-                giveTable: data.giveTable.filter(row => !row[5]),
-                receiveTable: data.receiveTable.filter(row => !row[5])
-            };
-            
-            populateTable("giveTable", filteredData.giveTable);
-            populateTable("receiveTable", filteredData.receiveTable);
-            
-            // Add empty rows for print version only (not saved to data)
-            addEmptyRowsForPrint();
-        }
-
-        function addEmptyRowsForPrint() {
-            // Add empty rows to fill the page in print mode (these won't be saved)
-            const numEmptyRows = 25;
-            
-            ["giveTable", "receiveTable"].forEach(tableId => {
-                const tbody = document.getElementById(tableId).querySelector("tbody");
+            if (dataRowIndex !== -1) {
+                gameData[tableId][dataRowIndex].deleted = false; // Mark as not deleted
+                saveGameData(); // Save updated data
                 
-                for (let i = 0; i < numEmptyRows; i++) {
-                    const tr = document.createElement("tr");
-                    tr.className = "print-filler-row";
-                    tr.innerHTML = `
-                        <td class="checkbox-cell"><input type="checkbox"></td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    `;
-                    // Don't add event listeners to filler rows so they won't trigger saveData
-                    tbody.appendChild(tr);
+                // Immediately update UI to show it's restored
+                row.classList.remove('deleted');
+                button.textContent = 'Eliminar';
+                button.className = 'action-btn delete-btn';
+                // Update the onclick to point back to deleteRow
+                button.onclick = () => deleteRow(button);
+            }
+        }
+
+        function updateRowData(element) {
+            const row = element.closest('tr');
+            const table = element.closest('table');
+            const tableId = table.id;
+            const rowIndexInDOM = Array.from(table.querySelectorAll('tbody tr')).indexOf(row);
+            
+            // Find the corresponding data item in gameData based on its current visible position
+            let dataIndex = -1;
+            let visibleCount = 0;
+            for (let i = 0; i < gameData[tableId].length; i++) {
+                // Only consider non-deleted and non-temporary blank rows for visible indexing
+                if (!gameData[tableId][i].deleted && !gameData[tableId][i].tempBlank) {
+                    if (visibleCount === rowIndexInDOM) {
+                        dataIndex = i;
+                        break;
+                    }
+                    visibleCount++;
                 }
-            });
+            }
+            
+            if (dataIndex !== -1 && gameData[tableId][dataIndex]) {
+                const cells = row.querySelectorAll('td');
+                const checkbox = cells[0].querySelector('input[type="checkbox"]');
+                
+                gameData[tableId][dataIndex] = {
+                    ...gameData[tableId][dataIndex], // Keep existing properties like 'deleted', 'tempBlank'
+                    checked: checkbox ? checkbox.checked : false,
+                    name: cells[1].textContent,
+                    ranger: cells[2].textContent,
+                    reason: cells[3].textContent,
+                    date: cells[4].textContent
+                };
+                
+                saveGameData(); // Save data
+            }
         }
 
-        function addRow(tableId) {
-            const tbody = document.getElementById(tableId).querySelector("tbody");
-            const tr = createRow("", "", "", "", false, false, tableId);
-            tbody.appendChild(tr);
-            
-            // Add subtle animation for new rows
-            tr.style.opacity = '0';
-            tr.style.transform = 'translateX(-10px)';
-            
-            setTimeout(() => {
-                tr.style.transition = 'all 0.3s ease';
-                tr.style.opacity = '1';
-                tr.style.transform = 'translateX(0)';
-            }, 10);
-            
-            saveData();
-        }
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Try to load saved data first
+            if (!loadGameData()) {
+                // If no saved data, load the Henshin preset
+                loadPreset('henshin');
+            } else {
+                // If loaded saved data, populate tables
+                populateTablesFromData();
+            }
 
-        document.addEventListener("DOMContentLoaded", loadData);
+            // Load saved headers
+            loadHeaders();
+
+            // Update print button
+            const printBtn = document.querySelector('.print-btn');
+            if (printBtn) {
+                printBtn.onclick = prepareForPrinting;
+            }
+        });
     </script>
 </body>
 </html>
