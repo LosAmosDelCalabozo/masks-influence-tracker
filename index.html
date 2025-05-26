@@ -134,6 +134,7 @@
             letter-spacing: 1px;
             border: none;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            position: relative; /* For sort icons */
         }
         
         /* Specific styles for editable headers */
@@ -167,6 +168,34 @@
         th:last-child {
             border-top-right-radius: 10px;
             width: 120px;
+        }
+
+        /* Sortable header styles */
+        th.sortable {
+            cursor: pointer;
+            padding-right: 30px; /* Make space for the icon */
+        }
+
+        th.sortable .sort-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.6);
+            transition: color 0.2s ease;
+        }
+
+        th.sortable:hover .sort-icon {
+            color: #fff;
+        }
+
+        th.sortable.asc .sort-icon::after {
+            content: '▲'; /* Up arrow for ascending */
+        }
+
+        th.sortable.desc .sort-icon::after {
+            content: '▼'; /* Down arrow for descending */
         }
 
         /* Table data cell styling */
@@ -376,18 +405,6 @@
             box-shadow: 0 6px 20px rgba(108, 117, 125, 0.5);
         }
 
-        .henshin-btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
-        }
-
-        .henshin-btn:hover {
-            background: linear-gradient(45deg, #764ba2, #667eea);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        }
-
         .random-btn {
             background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             color: white;
@@ -437,6 +454,43 @@
             box-shadow: 0 6px 20px rgba(162, 155, 254, 0.5);
         }
 
+        /* Language Toggle */
+        .language-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .lang-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+            background: linear-gradient(45deg, #34495e, #2c3e50);
+            color: #fff;
+            margin: 0 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(45deg, #00ffff, #00b894);
+            box-shadow: 0 4px 10px rgba(0, 255, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .lang-btn:hover:not(.active) {
+            background: linear-gradient(45deg, #4a69bd, #3b5998);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             body { padding: 15px; }
@@ -480,7 +534,7 @@
                 height: 100%;
             }
 
-            h1, .lookup-section, .add-button {
+            h1, .lookup-section, .add-button, .language-toggle {
                 display: none !important;
             }
 
@@ -583,63 +637,66 @@
 </head>
 <body>
     <div class="container">
-        <h1>⚡ Control de Influencia - Masks RPG ⚡</h1>
+        <h1 data-key="mainTitle">⚡ Control de Influencia - Masks RPG ⚡</h1>
         
+        <div class="language-toggle no-print">
+            <button class="lang-btn" data-lang="en">English</button>
+            <button class="lang-btn" data-lang="es">Español</button>
+        </div>
+
         <div class="print-layout">
             <div class="section print-table">
-                <div class="section-title give">🔥 Tengo Influencia Sobre</div>
+                <div class="section-title give" data-key="influenceOver">🔥 Tengo Influencia Sobre</div>
                 <div class="table-container">
                     <table id="giveTable">
                         <thead>
                             <tr>
-                                <th>✔️</th>
-                                <th>Nombre</th>
-                                <th id="giveRangerHeader" contenteditable="true" oninput="updateHeader(this, 'giveRanger')">Ranger</th>
-                                <th>Razón</th>
-                                <th>Fecha</th>
-                                <th class="no-print">Acciones</th>
+                                <th data-key="checkboxHeader">✔️</th>
+                                <th class="sortable" data-column="name" data-key="nameHeader">Nombre <span class="sort-icon"></span></th>
+                                <th id="givePowerHeader" contenteditable="true" oninput="updateHeader(this, 'givePower')" class="sortable" data-column="power" data-key="powerHeader">Poder <span class="sort-icon"></span></th>
+                                <th class="sortable" data-column="reason" data-key="reasonHeader">Razón <span class="sort-icon"></span></th>
+                                <th class="sortable" data-column="date" data-key="dateHeader">Fecha <span class="sort-icon"></span></th>
+                                <th class="no-print" data-key="actionsHeader">Acciones</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
                 </div>
-                <button class="add-button no-print" onclick="addRow('giveTable')">+ Agregar Personaje</button>
+                <button class="add-button no-print" onclick="addRow('giveTable')" data-key="addCharacterBtn">+ Agregar Personaje</button>
             </div>
 
             <div class="section print-table">
-                <div class="section-title receive">⚡ Tiene Influencia Sobre Mí</div>
+                <div class="section-title receive" data-key="influencedBy">⚡ Tiene Influencia Sobre Mí</div>
                 <div class="table-container">
                     <table id="receiveTable">
                         <thead>
                             <tr>
-                                <th>✔️</th>
-                                <th>Nombre</th>
-                                <th id="receiveRangerHeader" contenteditable="true" oninput="updateHeader(this, 'receiveRanger')">Ranger</th>
-                                <th>Cómo la Consiguió</th>
-                                <th>Fecha</th>
-                                <th class="no-print">Acciones</th>
+                                <th data-key="checkboxHeader">✔️</th>
+                                <th class="sortable" data-column="name" data-key="nameHeader">Nombre <span class="sort-icon"></span></th>
+                                <th id="receivePowerHeader" contenteditable="true" oninput="updateHeader(this, 'receivePower')" class="sortable" data-column="power" data-key="powerHeader">Poder <span class="sort-icon"></span></th>
+                                <th class="sortable" data-column="reason" data-key="howGainedHeader">Cómo la Consiguió <span class="sort-icon"></span></th>
+                                <th class="sortable" data-column="date" data-key="dateHeader">Fecha <span class="sort-icon"></span></th>
+                                <th class="no-print" data-key="actionsHeader">Acciones</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
                 </div>
-                <button class="add-button no-print" onclick="addRow('receiveTable')">+ Agregar Personaje</button>
+                <button class="add-button no-print" onclick="addRow('receiveTable')" data-key="addCharacterBtn">+ Agregar Personaje</button>
             </div>
         </div>
 
         <div class="lookup-section no-print">
-            <div class="lookup-title">🔍 Cargar Datos</div>
+            <div class="lookup-title" data-key="loadDataTitle">🔍 Cargar Datos</div>
             <div class="lookup-buttons">
-                <button class="lookup-btn blank-btn" onclick="loadPreset(event, 'blank')">Blank</button>
-                <button class="lookup-btn henshin-btn" onclick="loadPreset(event, 'henshin')">Henshin</button>
-                <button class="lookup-btn random-btn" onclick="loadPreset(event, 'random')">Random</button>
-                <!-- <button class="lookup-btn clear-btn" onclick="clearAllData(event)">Borrar Todo</button> -->
-                <button class="lookup-btn export-btn" onclick="exportDataToJson(event)">Descargar Datos</button>
+                <button class="lookup-btn blank-btn" onclick="loadPreset(event, 'blank')" data-key="blankBtn">Blank</button>
+                <button class="lookup-btn random-btn" onclick="loadPreset(event, 'random')" data-key="randomBtn">Random</button>
+                <button class="lookup-btn export-btn" onclick="exportDataToJson(event)" data-key="downloadDataBtn">Descargar Datos</button>
                 <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importDataFromJson(event)">
-                <button class="lookup-btn import-btn" onclick="document.getElementById('importFile').click()">Cargar Datos</button>
+                <button class="lookup-btn import-btn" onclick="document.getElementById('importFile').click()" data-key="loadDataBtn">Cargar Datos</button>
             </div>
         </div>
-        <button class="add-button print-btn no-print" onclick="prepareForPrinting()">🖨️ Imprimir</button>
+        <button class="add-button print-btn no-print" onclick="prepareForPrinting()" data-key="printBtn">🖨️ Imprimir</button>
     </div>
 
     <script>
@@ -651,16 +708,186 @@
         // Store a copy of original gameData for printing to revert later
         let originalGameData = {};
 
+        // Track current sort state for each table
+        let sortState = {
+            giveTable: { column: null, direction: 'asc' },
+            receiveTable: { column: null, direction: 'asc' }
+        };
+
+        // Current language state
+        let currentLang = localStorage.getItem('masksInfluenceTracker_lang') || 'en'; // Default to English
+
+        // Translation object
+        const translations = {
+            en: {
+                mainTitle: '⚡ Influence Tracker - Masks RPG ⚡',
+                influenceOver: '🔥 Influence Over',
+                influencedBy: '⚡ Influenced By Me',
+                checkboxHeader: '✔️',
+                nameHeader: 'Name',
+                powerHeader: 'Power',
+                reasonHeader: 'Reason',
+                dateHeader: 'Date',
+                howGainedHeader: 'How Gained',
+                actionsHeader: 'Actions',
+                addCharacterBtn: '+ Add Character',
+                loadDataTitle: '🔍 Load Data',
+                blankBtn: 'Blank',
+                randomBtn: 'Random',
+                downloadDataBtn: 'Download Data',
+                loadDataBtn: 'Load Data',
+                printBtn: '🖨️ Print',
+                deleteBtn: 'Delete',
+                restoreBtn: 'Restore',
+                clearedMsg: '✓ Cleared',
+                loadedMsg: '✓ Loaded',
+                downloadedMsg: '✓ Downloaded',
+                errorMsg: '❌ Error',
+                jsonErrorMsg: '❌ JSON Error',
+                confirmClear: 'Are you sure you want to clear all data? This action cannot be undone.'
+            },
+            es: {
+                mainTitle: '⚡ Control de Influencia - Masks RPG ⚡',
+                influenceOver: '🔥 Tengo Influencia Sobre',
+                influencedBy: '⚡ Tiene Influencia Sobre Mí',
+                checkboxHeader: '✔️',
+                nameHeader: 'Nombre',
+                powerHeader: 'Poder',
+                reasonHeader: 'Razón',
+                dateHeader: 'Fecha',
+                howGainedHeader: 'Cómo la Consiguió',
+                actionsHeader: 'Acciones',
+                addCharacterBtn: '+ Agregar Personaje',
+                loadDataTitle: '🔍 Cargar Datos',
+                blankBtn: 'Blank',
+                randomBtn: 'Random',
+                downloadDataBtn: 'Descargar Datos',
+                loadDataBtn: 'Cargar Datos',
+                printBtn: '🖨️ Imprimir',
+                deleteBtn: 'Eliminar',
+                restoreBtn: 'Restaurar',
+                clearedMsg: '✓ Borrado',
+                loadedMsg: '✓ Cargado',
+                downloadedMsg: '✓ Descargado',
+                errorMsg: '❌ Error',
+                jsonErrorMsg: '❌ Error JSON',
+                confirmClear: '¿Estás seguro de que quieres borrar todos los datos? Esta acción no se puede deshacer.'
+            }
+        };
+
+        // Random data generators (English)
+        const randomNames_en = [
+            "Alex Storm", "Maya Chen", "Jordan Rivers", "Sam Nova", "Riley Phoenix",
+            "Casey Volt", "Quinn Shadow", "Avery Blaze", "Harper Frost", "Skyler Wave",
+            "Dr. Marcus Vex", "Luna Darkmore", "Captain Steel", "Raven Nightshade", "Echo Prime",
+            "Zara Lightning", "Kai Stormwind", "Nova Sterling", "Ash Blackthorne", "Vera Cosmos"
+        ];
+
+        const randomPowers_en = [ 
+            "Super Strength", "Flight", "Telepathy", "Invisibility", "Elemental Manipulation",
+            "Telekinesis", "Accelerated Healing", "Energy Blasts", "Time Control", "Shapeshifting",
+            "X-Ray Vision", "Underwater Breathing", "Energy Absorption", "Shield Generation", "Super Speed",
+            "Illusion", "Shadow Manipulation", "Mind Control", "Elasticity", "Force Field Generation"
+        ];
+
+        const randomReasons_en = [
+            "saved their life in battle", "discovered their secret identity", "taught them a special technique",
+            "protected their family", "revealed important information to them", "fought alongside them",
+            "helped them through a difficult time", "shared a secret", "trained together",
+            "saved them from a trap", "trusts my judgment", "gave them crucial advice",
+            "helped them control their powers", "protected them from enemies", "showed them the right path"
+        ];
+
+        const randomInfluenceGains_en = [
+            "saved my life", "discovered my weakness", "defeated me in combat",
+            "taught me an important lesson", "helped me when I needed it most", "trust their expertise",
+            "inspired me to be better", "protected me from great danger", "showed me my mistake",
+            "earned my respect in battle", "helped me with my powers", "gave me hope",
+            "defended me to others", "sacrificed something for me", "taught me about heroism"
+        ];
+
+        // Random data generators (Spanish)
+        const randomNames_es = [
+            "Alex Tormenta", "Maya Chen", "Jordan Ríos", "Sam Nova", "Riley Fénix",
+            "Casey Voltio", "Quinn Sombra", "Avery Fuego", "Harper Escarcha", "Skyler Ola",
+            "Dr. Marcus Vex", "Luna Oscura", "Capitán Acero", "Cuervo Noche", "Eco Prime",
+            "Zara Relámpago", "Kai Viento", "Nova Sterling", "Ash Espino", "Vera Cosmos"
+        ];
+
+        const randomPowers_es = [ 
+            "Super Fuerza", "Vuelo", "Telepatía", "Invisibilidad", "Manipulación Elemental",
+            "Telequinesis", "Curación Acelerada", "Explosiones de Energía", "Control del Tiempo", "Cambio de Forma",
+            "Visión de Rayos X", "Respiración Subacuática", "Absorción de Energía", "Generación de Escudos", "Súper Velocidad",
+            "Ilusión", "Manipulación de Sombras", "Control Mental", "Elasticidad", "Generación de Campos de Fuerza"
+        ];
+
+        const randomReasons_es = [
+            "salvé su vida en batalla", "descubrí su identidad secreta", "le enseñé una técnica especial",
+            "protegí a su familia", "le revelé información importante", "luché junto a él/ella",
+            "le ayudé en un momento difícil", "compartimos un secreto", "entrené juntos",
+            "le salvé de una trampa", "confía en mi juicio", "le di consejos cruciales",
+            "le ayudó a controlar sus poderes", "le protegí de sus enemigos", "le mostró el camino correcto"
+        ];
+
+        const randomInfluenceGains_es = [
+            "me salvó la vida", "descubrió mi punto débil", "me derrotó en combate",
+            "me enseñó una lección importante", "me ayudó cuando más lo necesitaba", "confío en su experiencia",
+            "me inspiró a ser mejor", "me protegió de un gran peligro", "me mostró mi error",
+            "ganó mi respeto en batalla", "me ayudó con mis poderes", "me dio esperanza",
+            "me defendió ante otros", "sacrificó algo por mí", "me enseñó sobre el heroísmo"
+        ];
+
+
+        // Function to set the language
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang; // Set HTML lang attribute
+            localStorage.setItem('masksInfluenceTracker_lang', lang); // Save preference
+
+            // Update all elements with data-key attribute
+            document.querySelectorAll('[data-key]').forEach(element => {
+                const key = element.dataset.key;
+                if (translations[lang][key]) {
+                    if (element.tagName === 'INPUT' && element.type === 'file') {
+                        // Do nothing for file input, as its text is browser-controlled
+                    } else if (element.tagName === 'BUTTON' && (key === 'deleteBtn' || key === 'restoreBtn')) {
+                        // Handled dynamically in createRow/deleteRow/undoDelete
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+
+            // Special handling for editable headers
+            loadHeaders(); 
+            // Re-populate tables to ensure action button text is updated
+            populateTablesFromData(); 
+
+            // Update active language button styling
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
         // Save data to localStorage
         function saveGameData() {
             localStorage.setItem('masksInfluenceTracker', JSON.stringify(gameData));
+            localStorage.setItem('masksInfluenceTracker_sortState', JSON.stringify(sortState));
         }
 
         // Load data from localStorage
         function loadGameData() {
             const savedData = localStorage.getItem('masksInfluenceTracker');
+            const savedSortState = localStorage.getItem('masksInfluenceTracker_sortState');
             if (savedData) {
                 gameData = JSON.parse(savedData);
+                if (savedSortState) {
+                    sortState = JSON.parse(savedSortState);
+                }
                 return true;
             }
             return false;
@@ -673,40 +900,43 @@
 
         // Load header text from localStorage
         function loadHeaders() {
-            const giveRangerHeader = localStorage.getItem('masksInfluenceTracker_header_giveRanger');
-            const receiveRangerHeader = localStorage.getItem('masksInfluenceTracker_header_receiveRanger');
+            const givePowerHeader = localStorage.getItem('masksInfluenceTracker_header_givePower');
+            const receivePowerHeader = localStorage.getItem('masksInfluenceTracker_header_receivePower');
 
-            if (giveRangerHeader) {
-                document.getElementById('giveRangerHeader').textContent = giveRangerHeader;
+            if (givePowerHeader) {
+                document.getElementById('givePowerHeader').textContent = givePowerHeader;
             } else {
-                document.getElementById('giveRangerHeader').textContent = 'Ranger';
+                document.getElementById('givePowerHeader').textContent = translations[currentLang].powerHeader;
             }
 
-            if (receiveRangerHeader) {
-                document.getElementById('receiveRangerHeader').textContent = receiveRangerHeader;
+            if (receivePowerHeader) {
+                document.getElementById('receivePowerHeader').textContent = receivePowerHeader;
             } else {
-                document.getElementById('receiveRangerHeader').textContent = 'Ranger';
+                document.getElementById('receivePowerHeader').textContent = translations[currentLang].powerHeader;
             }
         }
 
         // Clear all data
-        function clearAllData(event) { // Added event parameter
+        function clearAllData(event) { 
             // Using a custom confirmation message in the UI instead of window.confirm
-            const confirmClear = confirm("¿Estás seguro de que quieres borrar todos los datos? Esta acción no se puede deshacer.");
+            const confirmClear = confirm(translations[currentLang].confirmClear);
             if (confirmClear) {
                 localStorage.removeItem('masksInfluenceTracker');
-                localStorage.removeItem('masksInfluenceTracker_header_giveRanger'); // Clear saved header for give table
-                localStorage.removeItem('masksInfluenceTracker_header_receiveRanger'); // Clear saved header for receive table
+                localStorage.removeItem('masksInfluenceTracker_header_givePower'); 
+                localStorage.removeItem('masksInfluenceTracker_header_receivePower'); 
+                localStorage.removeItem('masksInfluenceTracker_sortState'); 
                 gameData = { giveTable: [], receiveTable: [] };
+                sortState = { giveTable: { column: null, direction: 'asc' }, receiveTable: { column: null, direction: 'asc' } };
                 populateTablesFromData();
-                loadHeaders(); // Reset headers to default as well
+                loadHeaders(); 
+                updateSortIcons(); 
                 
                 // Visual feedback
                 const button = event.target;
                 const originalText = button.textContent;
                 const originalClass = button.className;
                 
-                button.textContent = '✓ Borrado';
+                button.textContent = translations[currentLang].clearedMsg;
                 button.className = 'lookup-btn clear-btn';
                 button.style.background = 'linear-gradient(45deg, #2ed573, #1dd361)';
                 
@@ -725,12 +955,14 @@
             document.getElementById('receiveTable').querySelector('tbody').innerHTML = '';
 
             // Populate giveTable
-            gameData.giveTable.forEach(rowData => {
+            const giveTableBody = document.getElementById('giveTable').querySelector('tbody');
+            const sortedGiveData = sortTableData('giveTable', gameData.giveTable);
+            sortedGiveData.forEach(rowData => {
                 // Only render if not deleted OR if it's a temporary blank row (for printing)
                 if (!rowData.deleted || rowData.tempBlank) {
                     const row = createRow(
                         rowData.name,
-                        rowData.ranger,
+                        rowData.power, 
                         rowData.reason,
                         rowData.date,
                         rowData.checked,
@@ -738,17 +970,19 @@
                         'giveTable',
                         rowData.tempBlank
                     );
-                    document.getElementById('giveTable').querySelector('tbody').appendChild(row);
+                    giveTableBody.appendChild(row);
                 }
             });
 
             // Populate receiveTable
-            gameData.receiveTable.forEach(rowData => {
+            const receiveTableBody = document.getElementById('receiveTable').querySelector('tbody');
+            const sortedReceiveData = sortTableData('receiveTable', gameData.receiveTable);
+            sortedReceiveData.forEach(rowData => {
                 // Only render if not deleted OR if it's a temporary blank row (for printing)
                 if (!rowData.deleted || rowData.tempBlank) {
                     const row = createRow(
                         rowData.name,
-                        rowData.ranger,
+                        rowData.power, 
                         rowData.reason,
                         rowData.date,
                         rowData.checked,
@@ -756,9 +990,10 @@
                         'receiveTable',
                         rowData.tempBlank
                     );
-                    document.getElementById('receiveTable').querySelector('tbody').appendChild(row);
+                    receiveTableBody.appendChild(row);
                 }
             });
+            updateSortIcons();
         }
         
         // This function now adds "data" for blank rows into gameData temporarily
@@ -769,7 +1004,7 @@
             const currentGiveDataRows = gameData.giveTable.filter(row => !row.deleted).length;
             for (let i = currentGiveDataRows; i < targetRows; i++) {
                 gameData.giveTable.push({
-                    checked: false, name: "", ranger: "", reason: "", date: "", deleted: false, tempBlank: true
+                    checked: false, name: "", power: "", reason: "", date: "", deleted: false, tempBlank: true 
                 });
             }
             
@@ -777,7 +1012,7 @@
             const currentReceiveDataRows = gameData.receiveTable.filter(row => !row.deleted).length;
             for (let i = currentReceiveDataRows; i < targetRows; i++) {
                 gameData.receiveTable.push({
-                    checked: false, name: "", ranger: "", reason: "", date: "", deleted: false, tempBlank: true
+                    checked: false, name: "", power: "", reason: "", date: "", deleted: false, tempBlank: true 
                 });
             }
         }
@@ -799,63 +1034,6 @@
             }, 500); // Give a little time for print dialog to appear/close
         }
 
-        // Default data sets
-        const defaultDataSets = {
-            henshin: {
-                giveTable: [
-                    { checked: false, name: "Rajish", ranger: "Caracol Zafiro", reason: "", date: "", deleted: false, tempBlank: false },
-                    { checked: false, name: "Kenshiro", ranger: "León Dorado", reason: "", date: "", deleted: false, tempBlank: false },
-                    { checked: false, name: "Ethan", ranger: "Guepardo Jade", reason: "", date: "", deleted: false, tempBlank: false },
-                    { checked: false, name: "Pa Pua", ranger: "Erizo Ónix", reason: "", date: "", deleted: false, tempBlank: false },
-                    { checked: false, name: "Yoko", ranger: "Dragón Rubí", reason: "líder", date: "", deleted: false, tempBlank: false },
-                    { checked: false, name: "Gandix Prime", ranger: "—", reason: "mentor", date: "", deleted: false, tempBlank: false }
-                ],
-                receiveTable: [
-                    { checked: false, name: "Rajish", ranger: "Caracol Zafiro", reason: "", date: "", deleted: false, tempBlank: false },
-                    { checked: false, name: "Kenshiro", ranger: "León Dorado", reason: "", date: "", deleted: false, tempBlank: false },
-                    { checked: false, name: "Ethan", ranger: "Guepardo Jade", reason: "", date: "", deleted: false, tempBlank: false },
-                    { checked: false, name: "Pa Pua", ranger: "Erizo Ónix", reason: "", date: "", deleted: false, tempBlank: false },
-                    { checked: false, name: "Yoko", ranger: "Dragón Rubí", reason: "líder", date: "", deleted: false, tempBlank: false },
-                    { checked: false, name: "Gandix Prime", ranger: "—", reason: "mentor", date: "", deleted: false, tempBlank: false }
-                ]
-            },
-            blank: {
-                giveTable: [],
-                receiveTable: []
-            }
-        };
-
-        // Random data generators
-        const randomNames = [
-            "Alex Storm", "Maya Chen", "Jordan Rivers", "Sam Nova", "Riley Phoenix",
-            "Casey Volt", "Quinn Shadow", "Avery Blaze", "Harper Frost", "Skyler Wave",
-            "Dr. Marcus Vex", "Luna Darkmore", "Captain Steel", "Raven Nightshade", "Echo Prime",
-            "Zara Lightning", "Kai Stormwind", "Nova Sterling", "Ash Blackthorne", "Vera Cosmos"
-        ];
-
-        const randomRangers = [
-            "Águila Dorada", "Lobo Plateado", "Tigre Escarlata", "Halcón Azul", "Serpiente Verde",
-            "Oso Bronce", "Libélula Violeta", "Escorpión Negro", "Mariposa Rosa", "Ciervo Blanco",
-            "Dragón Cristal", "Fénix Carmesí", "Pantera Sombra", "Delfín Turquesa", "Búho Lunar",
-            "Mantis Jade", "Cóndor Solar", "Zorro Ámbar", "Ballena Marina", "Murciélago Obsidiana"
-        ];
-
-        const randomReasons = [
-            "salvé su vida en batalla", "descubrí su identidad secreta", "le enseñé una técnica especial",
-            "protegí a su familia", "le revelé información importante", "luché junto a él/ella",
-            "le ayudé en un momento difícil", "compartimos un secreto", "entrené juntos",
-            "le salvé de una trampa", "confía en mi juicio", "le di consejos cruciales",
-            "le ayudó a controlar sus poderes", "le protegí de sus enemigos", "le mostré el camino correcto"
-        ];
-
-        const randomInfluenceGains = [
-            "me salvó la vida", "descubrió mi punto débil", "me derrotó en combate",
-            "me enseñó una lección importante", "me ayudó cuando más lo necesitaba", "confío en su experiencia",
-            "me inspiró a ser mejor", "me protegió de un gran peligro", "me mostró mi error",
-            "ganó mi respeto en batalla", "me ayudó con mis poderes", "me dio esperanza",
-            "me defendió ante otros", "sacrificó algo por mí", "me enseñó sobre el heroísmo"
-        ];
-
         function generateRandomData() {
             const shuffleArray = (array) => {
                 const shuffled = [...array];
@@ -874,16 +1052,23 @@
                 return `${day} ${month}`;
             };
 
+            // Select random data lists based on current language
+            const namesList = currentLang === 'en' ? randomNames_en : randomNames_es;
+            const powersList = currentLang === 'en' ? randomPowers_en : randomPowers_es;
+            const reasonsList = currentLang === 'en' ? randomReasons_en : randomReasons_es;
+            const influenceGainsList = currentLang === 'en' ? randomInfluenceGains_en : randomInfluenceGains_es;
+
+
             const numEntries = Math.floor(Math.random() * 6) + 4; // 4-9 entries
-            const shuffledNames = shuffleArray(randomNames);
-            const shuffledRangers = shuffleArray(randomRangers);
+            const shuffledNames = shuffleArray(namesList);
+            const shuffledPowers = shuffleArray(powersList); 
 
             const giveTable = [];
             const receiveTable = [];
 
             for (let i = 0; i < numEntries && i < shuffledNames.length; i++) {
                 const name = shuffledNames[i];
-                const ranger = shuffledRangers[i];
+                const power = shuffledPowers[i]; 
                 const date = getRandomDate();
 
                 // Some entries appear in both tables, some only in one
@@ -892,11 +1077,11 @@
                 const inReceive = inBoth || !inGive || Math.random() < 0.7;
 
                 if (inGive) {
-                    const reason = randomReasons[Math.floor(Math.random() * randomReasons.length)];
+                    const reason = reasonsList[Math.floor(Math.random() * reasonsList.length)];
                     giveTable.push({
                         checked: false,
                         name: name,
-                        ranger: ranger,
+                        power: power, 
                         reason: reason,
                         date: date,
                         deleted: false,
@@ -905,11 +1090,11 @@
                 }
 
                 if (inReceive) {
-                    const howGained = randomInfluenceGains[Math.floor(Math.random() * randomInfluenceGains.length)];
+                    const howGained = influenceGainsList[Math.floor(Math.random() * influenceGainsList.length)];
                     receiveTable.push({
                         checked: false,
                         name: name,
-                        ranger: ranger,
+                        power: power, 
                         reason: howGained,
                         date: date,
                         deleted: false,
@@ -921,7 +1106,7 @@
             return { giveTable, receiveTable };
         }
 
-        function loadPreset(event, preset) { // Added event parameter
+        function loadPreset(event, preset) { 
             let data;
             
             if (preset === 'random') {
@@ -940,22 +1125,24 @@
             saveGameData();
             populateTablesFromData();
 
-            // Visual feedback
-            const button = event.target;
-            const originalText = button.textContent;
-            const originalClass = button.className;
-            
-            button.textContent = '✓ Cargado';
-            button.style.background = 'linear-gradient(45deg, #2ed573, #1dd361)';
-            
-            setTimeout(() => {
-                button.textContent = originalText;
-                button.className = originalClass;
-                button.style.background = '';
-            }, 1500);
+            // Visual feedback only if a valid event object is provided (i.e., not called from DOMContentLoaded)
+            if (event && event.target) {
+                const button = event.target;
+                const originalText = button.textContent;
+                const originalClass = button.className;
+                
+                button.textContent = translations[currentLang].loadedMsg;
+                button.style.background = 'linear-gradient(45deg, #2ed573, #1dd361)';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.className = originalClass;
+                    button.style.background = '';
+                }, 1500);
+            }
         }
 
-        function createRow(name = "", ranger = "", reason = "", date = "", checked = false, deleted = false, tableId = "", tempBlank = false) {
+        function createRow(name = "", power = "", reason = "", date = "", checked = false, deleted = false, tableId = "", tempBlank = false) { 
             const tr = document.createElement("tr");
             if (deleted) {
                 tr.classList.add("deleted"); // Apply deleted style if marked
@@ -969,14 +1156,14 @@
                     ${tempBlank ? `<input type="checkbox" disabled>` : `<input type="checkbox" ${checked ? "checked" : ""} onchange="updateRowData(this)">`}
                 </td>
                 <td contenteditable="${!tempBlank}" oninput="updateRowData(this)">${name || '&nbsp;'}</td>
-                <td contenteditable="${!tempBlank}" oninput="updateRowData(this)">${ranger || '&nbsp;'}</td>
+                <td contenteditable="${!tempBlank}" oninput="updateRowData(this)">${power || '&nbsp;'}</td> 
                 <td contenteditable="${!tempBlank}" oninput="updateRowData(this)">${reason || '&nbsp;'}</td>
                 <td contenteditable="${!tempBlank}" oninput="updateRowData(this)">${date || '&nbsp;'}</td>
                 <td class="actions-cell no-print">
-                    ${tempBlank ? '&nbsp;' : // No actions for blank rows
+                    ${tempBlank ? '&nbsp;' : 
                         (deleted ? 
-                            '<button class="action-btn undo-btn" onclick="undoDelete(this)">Restaurar</button>' :
-                            '<button class="action-btn delete-btn" onclick="deleteRow(this)">Eliminar</button>'
+                            `<button class="action-btn undo-btn" onclick="undoDelete(this)">${translations[currentLang].restoreBtn}</button>` :
+                            `<button class="action-btn delete-btn" onclick="deleteRow(this)">${translations[currentLang].deleteBtn}</button>`
                         )
                     }
                 </td>
@@ -989,7 +1176,7 @@
             const newRowData = {
                 checked: false,
                 name: "",
-                ranger: "",
+                power: "", 
                 reason: "",
                 date: "",
                 deleted: false,
@@ -1019,11 +1206,21 @@
             // Find the corresponding data item in gameData (considering visible rows only for indexing)
             let dataIndex = -1;
             let visibleCount = 0;
-            for (let i = 0; i < gameData[tableId].length; i++) {
+            const currentTableData = sortTableData(tableId, gameData[tableId]); // Get currently sorted data
+            for (let i = 0; i < currentTableData.length; i++) {
                 // If the row is not deleted and not a temporary blank row, it's visible in normal view
-                if (!gameData[tableId][i].deleted && !gameData[tableId][i].tempBlank) {
+                if (!currentTableData[i].deleted && !currentTableData[i].tempBlank) {
                     if (visibleCount === rowIndexInDOM) {
-                        dataIndex = i;
+                        // Find the original index in gameData
+                        dataIndex = gameData[tableId].findIndex(item => 
+                            item.name === currentTableData[i].name && 
+                            item.power === currentTableData[i].power && 
+                            item.reason === currentTableData[i].reason &&
+                            item.date === currentTableData[i].date &&
+                            item.checked === currentTableData[i].checked &&
+                            item.deleted === currentTableData[i].deleted &&
+                            item.tempBlank === currentTableData[i].tempBlank
+                        );
                         break;
                     }
                     visibleCount++;
@@ -1036,7 +1233,7 @@
 
                 // Immediately update UI to show it's marked for deletion, but don't remove
                 row.classList.add('deleted');
-                button.textContent = 'Restaurar';
+                button.textContent = translations[currentLang].restoreBtn;
                 button.className = 'action-btn undo-btn';
                 // Update the onclick to point to undoDelete
                 button.onclick = () => undoDelete(button); 
@@ -1047,12 +1244,14 @@
             const row = button.closest('tr');
             const table = button.closest('table');
             const tableId = table.id;
-            // The name is used to find the corresponding data item in gameData, as rowIndexInDOM might not be reliable after filtering
+            // The name and power are used to find the corresponding data item in gameData
             const nameToFind = row.querySelector('td:nth-child(2)').textContent; 
+            const powerToFind = row.querySelector('td:nth-child(3)').textContent; 
             
-            // Find the row in gameData that matches the name and is currently marked as deleted
-            // Ensure we are looking for the exact row in gameData, not just any row with that name
-            const dataRowIndex = gameData[tableId].findIndex(item => item.name === nameToFind && item.deleted);
+            // Find the row in gameData that matches the name, power, and is currently marked as deleted
+            const dataRowIndex = gameData[tableId].findIndex(item => 
+                item.name === nameToFind && item.power === powerToFind && item.deleted 
+            );
             
             if (dataRowIndex !== -1) {
                 gameData[tableId][dataRowIndex].deleted = false; // Mark as not deleted
@@ -1060,7 +1259,7 @@
                 
                 // Immediately update UI to show it's restored
                 row.classList.remove('deleted');
-                button.textContent = 'Eliminar';
+                button.textContent = translations[currentLang].deleteBtn;
                 button.className = 'action-btn delete-btn';
                 // Update the onclick to point back to deleteRow
                 button.onclick = () => deleteRow(button);
@@ -1076,11 +1275,21 @@
             // Find the corresponding data item in gameData based on its current visible position
             let dataIndex = -1;
             let visibleCount = 0;
-            for (let i = 0; i < gameData[tableId].length; i++) {
+            const currentTableData = sortTableData(tableId, gameData[tableId]); // Get currently sorted data
+            for (let i = 0; i < currentTableData.length; i++) {
                 // Only consider non-deleted and non-temporary blank rows for visible indexing
-                if (!gameData[tableId][i].deleted && !gameData[tableId][i].tempBlank) {
+                if (!currentTableData[i].deleted && !currentTableData[i].tempBlank) {
                     if (visibleCount === rowIndexInDOM) {
-                        dataIndex = i;
+                        // Find the original index in gameData
+                        dataIndex = gameData[tableId].findIndex(item => 
+                            item.name === currentTableData[i].name && 
+                            item.power === currentTableData[i].power && 
+                            item.reason === currentTableData[i].reason &&
+                            item.date === currentTableData[i].date &&
+                            item.checked === currentTableData[i].checked &&
+                            item.deleted === currentTableData[i].deleted &&
+                            item.tempBlank === currentTableData[i].tempBlank
+                        );
                         break;
                     }
                     visibleCount++;
@@ -1095,7 +1304,7 @@
                     ...gameData[tableId][dataIndex], // Keep existing properties like 'deleted', 'tempBlank'
                     checked: checkbox ? checkbox.checked : false,
                     name: cells[1].textContent,
-                    ranger: cells[2].textContent,
+                    power: cells[2].textContent, 
                     reason: cells[3].textContent,
                     date: cells[4].textContent
                 };
@@ -1113,8 +1322,8 @@
             const dataToSave = {
                 gameData: gameData,
                 headers: {
-                    giveRanger: document.getElementById('giveRangerHeader').textContent,
-                    receiveRanger: document.getElementById('receiveRangerHeader').textContent
+                    givePower: document.getElementById('givePowerHeader').textContent, 
+                    receivePower: document.getElementById('receivePowerHeader').textContent 
                 }
             };
             const jsonData = JSON.stringify(dataToSave, null, 2); // Pretty print JSON for readability
@@ -1133,7 +1342,7 @@
             const originalText = button.textContent;
             const originalClass = button.className;
             
-            button.textContent = '✓ Descargado';
+            button.textContent = translations[currentLang].downloadedMsg;
             button.style.background = 'linear-gradient(45deg, #2ed573, #1dd361)'; // Green for success
             
             setTimeout(() => {
@@ -1168,20 +1377,20 @@
                     // Validate the structure of the imported data
                     if (importedData.gameData && importedData.headers && 
                         importedData.gameData.giveTable && importedData.gameData.receiveTable &&
-                        importedData.headers.giveRanger !== undefined && importedData.headers.receiveRanger !== undefined) {
+                        importedData.headers.givePower !== undefined && importedData.headers.receivePower !== undefined) { 
                         
                         gameData = importedData.gameData; // Update global gameData
                         
                         // Restore headers to localStorage
-                        localStorage.setItem('masksInfluenceTracker_header_giveRanger', importedData.headers.giveRanger);
-                        localStorage.setItem('masksInfluenceTracker_header_receiveRanger', importedData.headers.receiveRanger);
+                        localStorage.setItem('masksInfluenceTracker_header_givePower', importedData.headers.givePower); 
+                        localStorage.setItem('masksInfluenceTracker_header_receivePower', importedData.headers.receivePower); 
                         
                         saveGameData(); // Save the newly imported data to localStorage
                         populateTablesFromData(); // Refresh tables with new data
                         loadHeaders(); // Refresh headers with new data
 
                         // Visual feedback for success
-                        button.textContent = '✓ Cargado';
+                        button.textContent = translations[currentLang].loadedMsg;
                         button.style.background = 'linear-gradient(45deg, #2ed573, #1dd361)'; // Green for success
                         
                         setTimeout(() => {
@@ -1193,7 +1402,7 @@
                     } else {
                         // Invalid file format
                         console.error("Error: El archivo JSON no tiene el formato esperado.");
-                        button.textContent = '❌ Error';
+                        button.textContent = translations[currentLang].errorMsg;
                         button.style.background = 'linear-gradient(45deg, #ff4757, #ff3742)'; // Red for error
                         setTimeout(() => {
                             button.textContent = originalText;
@@ -1204,7 +1413,7 @@
                 } catch (error) {
                     // JSON parsing error
                     console.error("Error al leer el archivo JSON: ", error);
-                    button.textContent = '❌ Error JSON';
+                    button.textContent = translations[currentLang].jsonErrorMsg;
                     button.style.background = 'linear-gradient(45deg, #ff4757, #ff3742)'; // Red for error
                     setTimeout(() => {
                         button.textContent = originalText;
@@ -1218,19 +1427,92 @@
             event.target.value = '';
         }
 
+        // Sort function for table data
+        function sortTableData(tableId, data) {
+            const { column, direction } = sortState[tableId];
+            if (!column) {
+                return data; // No column to sort, return original data
+            }
+
+            // Create a copy to avoid modifying the original array during sort
+            const sortedData = [...data];
+
+            sortedData.sort((a, b) => {
+                const aValue = a[column] ? String(a[column]).toLowerCase() : '';
+                const bValue = b[column] ? String(b[column]).toLowerCase() : '';
+
+                if (aValue < bValue) {
+                    return direction === 'asc' ? -1 : 1;
+                }
+                if (aValue > bValue) {
+                    return direction === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+            return sortedData;
+        }
+
+        // Handle header click for sorting
+        function handleSortClick(event) {
+            const header = event.currentTarget;
+            const table = header.closest('table');
+            const tableId = table.id;
+            const column = header.dataset.column;
+
+            if (sortState[tableId].column === column) {
+                // If same column, toggle direction
+                sortState[tableId].direction = sortState[tableId].direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                // If new column, set to asc
+                sortState[tableId].column = column;
+                sortState[tableId].direction = 'asc';
+            }
+            saveGameData(); // Save updated sort state
+            populateTablesFromData(); // Re-populate tables with sorted data
+        }
+
+        // Update sort icons in headers
+        function updateSortIcons() {
+            document.querySelectorAll('.sortable').forEach(header => {
+                const tableId = header.closest('table').id;
+                const column = header.dataset.column;
+                const icon = header.querySelector('.sort-icon');
+
+                header.classList.remove('asc', 'desc');
+                if (sortState[tableId].column === column) {
+                    header.classList.add(sortState[tableId].direction);
+                }
+            });
+        }
+
         // Initialize on load
         window.addEventListener('DOMContentLoaded', () => {
+            // Set initial language based on localStorage or default
+            setLanguage(currentLang);
+
             // Try to load saved data first
             if (!loadGameData()) {
-                // If no saved data, load the Henshin preset
-                loadPreset(null, 'henshin'); // Pass null for event as it's not a user click
+                // If no saved data, load the random preset
+                loadPreset(null, 'random'); 
             } else {
                 // If loaded saved data, populate tables
                 populateTablesFromData();
             }
 
-            // Load saved headers
+            // Load saved headers (will use currentLang for default if not saved)
             loadHeaders();
+
+            // Add event listeners for sortable headers
+            document.querySelectorAll('.sortable').forEach(header => {
+                header.addEventListener('click', handleSortClick);
+            });
+
+            // Add event listeners for language toggle buttons
+            document.querySelectorAll('.lang-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    setLanguage(event.target.dataset.lang);
+                });
+            });
 
             // Update print button
             const printBtn = document.querySelector('.print-btn');
