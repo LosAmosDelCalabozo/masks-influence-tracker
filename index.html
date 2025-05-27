@@ -716,6 +716,14 @@
 
         // Current language state
         let currentLang = localStorage.getItem('masksInfluenceTracker_lang') || 'en'; // Default to English
+        
+        // Default data sets
+        const defaultDataSets = {
+            blank: {
+                giveTable: [],
+                receiveTable: []
+            }
+        };
 
         // Translation object
         const translations = {
