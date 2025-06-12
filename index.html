@@ -1180,30 +1180,34 @@
             return tr;
         }
 
-        function addRow(tableId) {
-            const newRowData = {
-                checked: false,
-                name: "",
-                power: "", 
-                reason: "",
-                date: "",
-                deleted: false,
-                tempBlank: false // New rows are not temporary blank
-            };
-            gameData[tableId].push(newRowData);
-            saveGameData();
-            populateTablesFromData(); // Re-populate to show the new row
+     function addRow(tableId) {
+        const newRowData = {
+            checked: false,
+            name: "",
+            power: "", 
+            reason: "",
+            date: "",
+            deleted: false,
+            tempBlank: false,
+            isEmpty: true // Mark as empty row
+        };
+        
+        // Add the new row to the end of the array
+        gameData[tableId].push(newRowData);
+        saveGameData();
+        
+        populateTablesFromData(); // Re-populate to show the new row
 
-            // Find the newly added row in the DOM and focus on its first editable cell
-            const tableBody = document.getElementById(tableId).querySelector('tbody');
-            const lastRow = tableBody.lastElementChild;
-            if (lastRow) {
-                const firstEditableCell = lastRow.querySelector('td[contenteditable="true"]');
-                if (firstEditableCell) {
-                    firstEditableCell.focus();
-                }
+        // Find the newly added row in the DOM and focus on its first editable cell
+        const tableBody = document.getElementById(tableId).querySelector('tbody');
+        const lastRow = tableBody.lastElementChild;
+        if (lastRow) {
+            const firstEditableCell = lastRow.querySelector('td[contenteditable="true"]');
+            if (firstEditableCell) {
+                firstEditableCell.focus();
             }
         }
+    }
 
         function deleteRow(button) {
             const row = button.closest('tr');
@@ -1275,52 +1279,51 @@
         }
 
         function updateRowData(element) {
-            const row = element.closest('tr');
-            const table = element.closest('table');
-            const tableId = table.id;
-            const rowIndexInDOM = Array.from(table.querySelectorAll('tbody tr')).indexOf(row);
-            
-            // Find the corresponding data item in gameData based on its current visible position
-            let dataIndex = -1;
-            let visibleCount = 0;
-            const currentTableData = sortTableData(tableId, gameData[tableId]); // Get currently sorted data
-            for (let i = 0; i < currentTableData.length; i++) {
-                // Only consider non-deleted and non-temporary blank rows for visible indexing
-                if (!currentTableData[i].deleted && !currentTableData[i].tempBlank) {
-                    if (visibleCount === rowIndexInDOM) {
-                        // Find the original index in gameData
-                        dataIndex = gameData[tableId].findIndex(item => 
-                            item.name === currentTableData[i].name && 
-                            item.power === currentTableData[i].power && 
-                            item.reason === currentTableData[i].reason &&
-                            item.date === currentTableData[i].date &&
-                            item.checked === currentTableData[i].checked &&
-                            item.deleted === currentTableData[i].deleted &&
-                            item.tempBlank === currentTableData[i].tempBlank
-                        );
-                        break;
-                    }
-                    visibleCount++;
+        const row = element.closest('tr');
+        const table = element.closest('table');
+        const tableId = table.id;
+        const rowIndexInDOM = Array.from(table.querySelectorAll('tbody tr')).indexOf(row);
+        
+        // Find the corresponding data item in gameData
+        let dataIndex = -1;
+        let visibleCount = 0;
+        const currentTableData = sortTableData(tableId, gameData[tableId]);
+        for (let i = 0; i < currentTableData.length; i++) {
+            if (!currentTableData[i].deleted && !currentTableData[i].tempBlank) {
+                if (visibleCount === rowIndexInDOM) {
+                    dataIndex = gameData[tableId].findIndex(item => 
+                        item.name === currentTableData[i].name && 
+                        item.power === currentTableData[i].power && 
+                        item.reason === currentTableData[i].reason &&
+                        item.date === currentTableData[i].date &&
+                        item.checked === currentTableData[i].checked &&
+                        item.deleted === currentTableData[i].deleted &&
+                        item.tempBlank === currentTableData[i].tempBlank
+                    );
+                    break;
                 }
-            }
-            
-            if (dataIndex !== -1 && gameData[tableId][dataIndex]) {
-                const cells = row.querySelectorAll('td');
-                const checkbox = cells[0].querySelector('input[type="checkbox"]');
-                
-                gameData[tableId][dataIndex] = {
-                    ...gameData[tableId][dataIndex], // Keep existing properties like 'deleted', 'tempBlank'
-                    checked: checkbox ? checkbox.checked : false,
-                    name: cells[1].textContent,
-                    power: cells[2].textContent, 
-                    reason: cells[3].textContent,
-                    date: cells[4].textContent
-                };
-                
-                saveGameData(); // Save data
+                visibleCount++;
             }
         }
-
+        
+        if (dataIndex !== -1 && gameData[tableId][dataIndex]) {
+            const cells = row.querySelectorAll('td');
+            const checkbox = cells[0].querySelector('input[type="checkbox"]');
+            
+            gameData[tableId][dataIndex] = {
+                ...gameData[tableId][dataIndex],
+                checked: checkbox ? checkbox.checked : false,
+                name: cells[1].textContent,
+                power: cells[2].textContent, 
+                reason: cells[3].textContent,
+                date: cells[4].textContent,
+                isEmpty: !cells[1].textContent && !cells[2].textContent && 
+                         !cells[3].textContent && !cells[4].textContent
+            };
+            
+            saveGameData();
+        }
+    }
         /**
          * Exports the current game data and header information to a JSON file,
          * triggering a download for the user.
@@ -1436,29 +1439,40 @@
         }
 
         // Sort function for table data
-        function sortTableData(tableId, data) {
-            const { column, direction } = sortState[tableId];
-            if (!column) {
-                return data; // No column to sort, return original data
-            }
-
-            // Create a copy to avoid modifying the original array during sort
-            const sortedData = [...data];
-
-            sortedData.sort((a, b) => {
-                const aValue = a[column] ? String(a[column]).toLowerCase() : '';
-                const bValue = b[column] ? String(b[column]).toLowerCase() : '';
-
-                if (aValue < bValue) {
-                    return direction === 'asc' ? -1 : 1;
-                }
-                if (aValue > bValue) {
-                    return direction === 'asc' ? 1 : -1;
-                }
-                return 0;
-            });
-            return sortedData;
+       function sortTableData(tableId, data) {
+        const { column, direction } = sortState[tableId];
+        if (!column) {
+            return data; // No column to sort, return original data
         }
+
+        // Create a copy to avoid modifying the original array during sort
+        const sortedData = [...data];
+
+        sortedData.sort((a, b) => {
+            // Check if either row is empty (all fields empty except checkbox)
+            const aIsEmpty = !a.name && !a.power && !a.reason && !a.date;
+            const bIsEmpty = !b.name && !b.power && !b.reason && !b.date;
+
+            // Always sort empty rows to the bottom
+            if (aIsEmpty && !bIsEmpty) return 1;
+            if (!aIsEmpty && bIsEmpty) return -1;
+            if (aIsEmpty && bIsEmpty) return 0;
+
+            // Normal sorting for non-empty rows
+            const aValue = a[column] ? String(a[column]).toLowerCase() : '';
+            const bValue = b[column] ? String(b[column]).toLowerCase() : '';
+
+            if (aValue < bValue) {
+                return direction === 'asc' ? -1 : 1;
+            }
+            if (aValue > bValue) {
+                return direction === 'asc' ? 1 : -1;
+            }
+            return 0;
+        });
+        
+        return sortedData;
+    }
 
         // Handle header click for sorting
         function handleSortClick(event) {
